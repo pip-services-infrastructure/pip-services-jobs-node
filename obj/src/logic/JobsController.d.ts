@@ -1,0 +1,31 @@
+import { FilterParams } from 'pip-services3-commons-node';
+import { PagingParams } from 'pip-services3-commons-node';
+import { DataPage } from 'pip-services3-commons-node';
+import { ConfigParams } from 'pip-services3-commons-node';
+import { IConfigurable } from 'pip-services3-commons-node';
+import { IReferences } from 'pip-services3-commons-node';
+import { IReferenceable } from 'pip-services3-commons-node';
+import { CommandSet } from 'pip-services3-commons-node';
+import { ICommandable } from 'pip-services3-commons-node';
+import { JobV1 } from '../../src/data/version1/JobV1';
+import { IJobsController } from './IJobsController';
+import { NewJobV1 } from '..';
+export declare class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable {
+    private _persistence;
+    private _commandSet;
+    constructor();
+    configure(config: ConfigParams): void;
+    setReferences(references: IReferences): void;
+    getCommandSet(): CommandSet;
+    addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
+    addUniqJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
+    getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
+    startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    compleateJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void;
+    deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    deleteJobs(correlationId: string, callback?: (err: any) => void): void;
+    cleanJobs(correlationId: string, callback?: (err: any) => void): void;
+}
