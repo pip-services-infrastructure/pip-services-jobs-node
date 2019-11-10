@@ -65,8 +65,8 @@ class JobsController {
     // Abort job
     abortJob(correlationId, job, callback) {
         job.lock = false;
-        job.locked_until = null;
-        job.started = null;
+        job.locked_until = undefined;
+        job.started = undefined;
         this._persistence.update(correlationId, job, callback);
     }
     // Compleate job
@@ -89,6 +89,7 @@ class JobsController {
     }
     // Clean compleated and expiration jobs
     cleanJobs(correlationId, callback) {
+        // must be writen :)
     }
 }
 exports.JobsController = JobsController;

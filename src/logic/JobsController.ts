@@ -88,8 +88,8 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     // Abort job
     public abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
         job.lock = false;
-        job.locked_until = null;
-        job.started = null;
+        job.locked_until = undefined;
+        job.started = undefined;
         this._persistence.update(correlationId, job, callback);
     }
     // Compleate job
@@ -112,6 +112,6 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
     // Clean compleated and expiration jobs
     public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
-
+        // must be writen :)
     }
 }

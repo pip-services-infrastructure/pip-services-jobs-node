@@ -7,9 +7,9 @@ export class NewJobV1Schema extends ObjectSchema {
         this.withRequiredProperty('id', TypeCode.String);
         this.withRequiredProperty('type', TypeCode.String);
         this.withRequiredProperty('ref_id', TypeCode.String);
-        this.withOptionalProperty('params', TypeCode.Object);
-        this.withRequiredProperty('timeout', TypeCode.String);
+        this.withOptionalProperty('params', null);
+        this.withRequiredProperty('timeout', null);
         this.withRequiredProperty('retries', TypeCode.Integer);
-        this.withRequiredProperty('ttl', TypeCode.String);
+        this.withRequiredProperty('ttl', null);
     }
 }

@@ -3,7 +3,7 @@ let async = require('async');
 let assert = require('chai').assert;
 let restify = require('restify');
 
-import { ConfigParams } from 'pip-services3-commons-node';
+import { ConfigParams, DateTimeConverter } from 'pip-services3-commons-node';
 import { Descriptor } from 'pip-services3-commons-node';
 import { References } from 'pip-services3-commons-node';
 import { FilterParams } from 'pip-services3-commons-node';
@@ -109,7 +109,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB1.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB1.retries, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -136,7 +136,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB1.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB1.retries, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -156,14 +156,14 @@ suite('JobsHttpServiceV1', () => {
                     {
                         new_job: JOB3
                     },
-                    (err, job) => {
+                    (err, req, res, job) => {
                         assert.isNull(err);
 
                         assert.isObject(job);
                         assert.equal(JOB3.id, job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(JOB3.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB3.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB3.retries, job.try_counter);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -197,7 +197,7 @@ suite('JobsHttpServiceV1', () => {
                         filter: new FilterParams(),
                         paging: new PagingParams()
                     },
-                    (err, req, resp, page) => {
+                    (err, req, res, page) => {
                         assert.isNull(err);
 
                         assert.isObject(page);
@@ -233,7 +233,7 @@ suite('JobsHttpServiceV1', () => {
                     (err, req, res, job) => {
                         assert.isNull(err);
 
-                        assert.isNull(job || null);
+                        assert.isEmpty(job);
 
                         callback();
                     }
@@ -286,7 +286,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB1.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB1.retries, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -313,7 +313,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB1.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB1.retries, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -340,7 +340,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB3.id, job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(JOB3.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
+                        assert.equal(JOB3.timeout.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.timeout).getUTCMilliseconds());
                         assert.equal(JOB3.retries, job.try_counter);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -358,7 +358,7 @@ suite('JobsHttpServiceV1', () => {
             (callback) => {
                 rest.post('/v1/jobs/get_job_by_id',
                     {
-                        new_job: JOB1.id
+                        job_id: JOB1.id
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
@@ -404,7 +404,7 @@ suite('JobsHttpServiceV1', () => {
             },
             // Test extend job
             (callback) => {
-                let newExeUntil = new Date(job1.execute_until.getUTCMilliseconds() + job1.timeout.getUTCMilliseconds());
+                let newExeUntil = new Date(DateTimeConverter.toDateTime(job1.execute_until).getUTCMilliseconds() + DateTimeConverter.toDateTime(job1.timeout).getUTCMilliseconds());
                 rest.post('/v1/jobs/extend_job',
                     {
                         job: job1
@@ -414,7 +414,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isObject(job);
                         assert.equal(true, job.lock);
 
-                        assert.equal(newExeUntil.getUTCMilliseconds(), job.execute_until.getUTCMilliseconds());
+                        assert.equal(newExeUntil.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.execute_until).getUTCMilliseconds());
                         job1 = job;
                         callback(err);
                     }

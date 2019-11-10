@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+let _ = require('lodash');
 const pip_services3_commons_node_1 = require("pip-services3-commons-node");
 const pip_services3_commons_node_2 = require("pip-services3-commons-node");
 const pip_services3_commons_node_3 = require("pip-services3-commons-node");
@@ -28,6 +29,8 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('add_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('new_job', new NewJobV1Schema_1.NewJobV1Schema()), (correlationId, args, callback) => {
             let newJob = args.getAsObject('new_job');
+            newJob.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(newJob.timeout);
+            newJob.ttl = pip_services3_commons_node_1.DateTimeConverter.toDateTime(newJob.ttl);
             this._controller.addJob(correlationId, newJob, callback);
         });
     }
@@ -35,6 +38,8 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('add_uniq_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('new_job', new NewJobV1Schema_1.NewJobV1Schema()), (correlationId, args, callback) => {
             let newJob = args.getAsObject('new_job');
+            newJob.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(newJob.timeout);
+            newJob.ttl = pip_services3_commons_node_1.DateTimeConverter.toDateTime(newJob.ttl);
             this._controller.addUniqJob(correlationId, newJob, callback);
         });
     }
@@ -58,6 +63,12 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('start_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
+            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
+            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
+            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
+            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             this._controller.startJob(correlationId, job, callback);
         });
     }
@@ -65,6 +76,12 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('extend_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
+            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
+            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
+            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
+            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             this._controller.extendJob(correlationId, job, callback);
         });
     }
@@ -72,6 +89,12 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('abort_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
+            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
+            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
+            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
+            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             this._controller.abortJob(correlationId, job, callback);
         });
     }
@@ -79,6 +102,12 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         return new pip_services3_commons_node_2.Command('compleate_job', new pip_services3_commons_node_3.ObjectSchema(false)
             .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
+            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
+            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
+            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
+            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             this._controller.compleateJob(correlationId, job, callback);
         });
     }

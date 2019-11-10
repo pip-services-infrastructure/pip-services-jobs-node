@@ -8,13 +8,13 @@ class JobV1Schema extends pip_services3_commons_node_1.ObjectSchema {
         this.withRequiredProperty('id', pip_services3_commons_node_2.TypeCode.String);
         this.withRequiredProperty('type', pip_services3_commons_node_2.TypeCode.String);
         this.withRequiredProperty('ref_id', pip_services3_commons_node_2.TypeCode.String);
-        this.withRequiredProperty('params', pip_services3_commons_node_2.TypeCode.Object);
-        this.withRequiredProperty('timeout', pip_services3_commons_node_2.TypeCode.String);
-        this.withRequiredProperty('created', pip_services3_commons_node_2.TypeCode.String);
-        this.withOptionalProperty('started', pip_services3_commons_node_2.TypeCode.String);
-        this.withOptionalProperty('locked_until', pip_services3_commons_node_2.TypeCode.String);
-        this.withRequiredProperty('execute_until', pip_services3_commons_node_2.TypeCode.String);
-        this.withOptionalProperty('completed', pip_services3_commons_node_2.TypeCode.String);
+        this.withOptionalProperty('params', null);
+        this.withRequiredProperty('timeout', null);
+        this.withRequiredProperty('created', null);
+        this.withOptionalProperty('started', null);
+        this.withOptionalProperty('locked_until', null);
+        this.withRequiredProperty('execute_until', null);
+        this.withOptionalProperty('completed', null);
         this.withRequiredProperty('lock', pip_services3_commons_node_2.TypeCode.Boolean);
         this.withRequiredProperty('try_counter', pip_services3_commons_node_2.TypeCode.Integer);
     }

@@ -1,4 +1,6 @@
-import { CommandSet, FilterParams, PagingParams, DataPage } from 'pip-services3-commons-node';
+let _ = require('lodash');
+
+import { CommandSet, FilterParams, PagingParams, DataPage, DateTimeConverter } from 'pip-services3-commons-node';
 import { ICommand } from 'pip-services3-commons-node';
 import { Command } from 'pip-services3-commons-node';
 import { ObjectSchema } from 'pip-services3-commons-node';
@@ -10,6 +12,7 @@ import { Parameters } from 'pip-services3-commons-node';
 import { NewJobV1Schema } from '../../src/data/version1/NewJobV1Schema';
 import { IJobsController } from '../../src/logic/IJobsController';
 import { JobV1Schema } from '../data/version1/JobV1Schema';
+import { NewJobV1, JobV1 } from '../data/version1';
 
 export class JobsCommandSet extends CommandSet {
     private _controller: IJobsController;
@@ -38,7 +41,9 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('new_job', new NewJobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let newJob = args.getAsObject('new_job');
+                let newJob: NewJobV1 = args.getAsObject('new_job');
+                newJob.timeout = DateTimeConverter.toDateTime(newJob.timeout);
+                newJob.ttl = DateTimeConverter.toDateTime(newJob.ttl);
                 this._controller.addJob(correlationId, newJob, callback);
             }
         );
@@ -50,7 +55,9 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('new_job', new NewJobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let newJob = args.getAsObject('new_job');
+                let newJob: NewJobV1 = args.getAsObject('new_job');
+                newJob.timeout = DateTimeConverter.toDateTime(newJob.timeout);
+                newJob.ttl = DateTimeConverter.toDateTime(newJob.ttl);
                 this._controller.addUniqJob(correlationId, newJob, callback);
             }
         );
@@ -88,7 +95,14 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let job = args.getAsObject('job');
+                let job: JobV1 = args.getAsObject('job');
+                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
+                job.timeout = DateTimeConverter.toDateTime(job.timeout);
+                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
+                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.created = DateTimeConverter.toDateTime(job.created);
+
                 this._controller.startJob(correlationId, job, callback);
             }
         );
@@ -100,7 +114,13 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let job = args.getAsObject('job');
+                let job: JobV1 = args.getAsObject('job');
+                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
+                job.timeout = DateTimeConverter.toDateTime(job.timeout);
+                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
+                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.created = DateTimeConverter.toDateTime(job.created);
                 this._controller.extendJob(correlationId, job, callback);
             }
         );
@@ -112,7 +132,13 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let job = args.getAsObject('job');
+                let job: JobV1 = args.getAsObject('job');
+                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
+                job.timeout = DateTimeConverter.toDateTime(job.timeout);
+                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
+                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.created = DateTimeConverter.toDateTime(job.created);
                 this._controller.abortJob(correlationId, job, callback);
             }
         );
@@ -124,7 +150,13 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let job = args.getAsObject('job');
+                let job: JobV1 = args.getAsObject('job');
+                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
+                job.timeout = DateTimeConverter.toDateTime(job.timeout);
+                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
+                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.created = DateTimeConverter.toDateTime(job.created);
                 this._controller.compleateJob(correlationId, job, callback);
             }
         );
@@ -136,7 +168,7 @@ export class JobsCommandSet extends CommandSet {
             new ObjectSchema(false)
                 .withRequiredProperty('job_id', TypeCode.String),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let jobId = args.getAsString('job_id');
+                let jobId: string = args.getAsString('job_id');
                 this._controller.deleteJob(correlationId, jobId, callback);
             }
         );

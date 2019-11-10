@@ -6,4 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./data/version1"));
 __export(require("./services"));
 __export(require("./persistence"));
+__export(require("./container"));
+__export(require("./build"));
 //# sourceMappingURL=index.js.map
