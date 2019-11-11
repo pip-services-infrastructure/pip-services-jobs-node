@@ -7,12 +7,44 @@ const pip_services3_commons_node_2 = require("pip-services3-commons-node");
 const pip_services3_commons_node_3 = require("pip-services3-commons-node");
 const JobV1_1 = require("../../src/data/version1/JobV1");
 const JobsCommandSet_1 = require("./JobsCommandSet");
+const pip_services3_commons_node_4 = require("pip-services3-commons-node");
+const pip_services3_components_node_1 = require("pip-services3-components-node");
 class JobsController {
-    constructor() { }
+    constructor() {
+        this.cleanInterval = 1000 * 60;
+        this._logger = new pip_services3_components_node_1.CompositeLogger();
+        this.isOpenFlag = false;
+        this._fixeRateTimer = new pip_services3_commons_node_4.FixedRateTimer();
+    }
     configure(config) {
+        this._config = config;
+        this._logger.configure(config);
+        this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000 * 60);
+    }
+    open(correlationId, callback) {
+        this._fixeRateTimer.setCallback(() => {
+            this.cleanJobs(correlationId);
+        });
+        this._fixeRateTimer.setInterval(this.cleanInterval);
+        this._fixeRateTimer.start();
+        this.isOpenFlag = true;
+        this._logger.trace(correlationId, "Jobs controller is opened");
+        if (callback)
+            callback(null);
+    }
+    isOpen() {
+        return this.isOpenFlag;
+    }
+    close(correlationId, callback) {
+        this._fixeRateTimer.stop();
+        this.isOpenFlag = false;
+        this._logger.trace(correlationId, "Jobs controller is closed");
+        if (callback)
+            callback(null);
     }
     setReferences(references) {
         this._persistence = references.getOneRequired(new pip_services3_commons_node_3.Descriptor('jobs', 'persistence', '*', '*', '1.0'));
+        this._logger.setReferences(references);
     }
     getCommandSet() {
         if (this._commandSet == null) {
@@ -89,7 +121,32 @@ class JobsController {
     }
     // Clean compleated and expiration jobs
     cleanJobs(correlationId, callback) {
-        // must be writen :)
+        this._logger.trace(correlationId, "Jobs controller clean procedure start.");
+        //delete all job with 0 try counter
+        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('try_counter', 0);
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
+                callback(err);
+            }
+        });
+        //delete all job with expired execution_time
+        filter = pip_services3_commons_node_1.FilterParams.fromTuples('execution_time_max', new Date());
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
+                callback(err);
+            }
+        });
+        //delete all job with expired execution_time
+        filter = pip_services3_commons_node_1.FilterParams.fromTuples('compleated_max', new Date());
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
+            }
+            this._logger.trace(correlationId, "Jobs controller clean procedure end.");
+            callback(err);
+        });
     }
 }
 exports.JobsController = JobsController;

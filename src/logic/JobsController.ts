@@ -1,7 +1,7 @@
 let _ = require('lodash');
 let async = require('async');
 
-import { FilterParams } from 'pip-services3-commons-node';
+import { FilterParams, IOpenable } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 import { ConfigParams } from 'pip-services3-commons-node';
@@ -17,22 +17,60 @@ import { JobV1 } from '../../src/data/version1/JobV1';
 import { IJobsPersistence } from '../../src/persistence/IJobsPersistence';
 import { IJobsController } from './IJobsController';
 import { JobsCommandSet } from './JobsCommandSet';
-import { NewJobV1 } from '..';
+import { NewJobV1 } from '../data/version1/NewJobV1';
+import { FixedRateTimer } from 'pip-services3-commons-node';
+import { CompositeLogger } from 'pip-services3-components-node';
 
-export class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable {
+
+export class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable, IOpenable {
     private _persistence: IJobsPersistence;
     private _commandSet: JobsCommandSet;
+    private isOpenFlag: boolean;
+    private _fixeRateTimer: FixedRateTimer;
+    private _config: ConfigParams;
+    private cleanInterval:number = 1000*60;
+    private _logger: CompositeLogger = new CompositeLogger();
 
-    public constructor() { }
+    public constructor() {
+        this.isOpenFlag = false;
+        this._fixeRateTimer = new FixedRateTimer();
+    }
 
     public configure(config: ConfigParams): void {
+        this._config = config;
+        this._logger.configure(config);
+        this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000*60);
+    }
 
+    public open(correlationId: string, callback?: (err: any) => void): void {
+        this._fixeRateTimer.setCallback(() => {
+            this.cleanJobs(correlationId);
+        });
+        this._fixeRateTimer.setInterval(this.cleanInterval);
+        this._fixeRateTimer.start();
+        this.isOpenFlag = true;
+        this._logger.trace(correlationId, "Jobs controller is opened");
+        if (callback)
+            callback(null);
+    }
+
+    public isOpen(): boolean {
+        return this.isOpenFlag;
+    }
+
+    public close(correlationId: string, callback?: (err: any) => void): void {
+        this._fixeRateTimer.stop();
+        this.isOpenFlag = false;
+        this._logger.trace(correlationId, "Jobs controller is closed");
+        if (callback)
+            callback(null);
     }
 
     public setReferences(references: IReferences): void {
         this._persistence = references.getOneRequired<IJobsPersistence>(
             new Descriptor('jobs', 'persistence', '*', '*', '1.0')
         );
+        this._logger.setReferences(references);
     }
 
     public getCommandSet(): CommandSet {
@@ -112,6 +150,41 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
     // Clean compleated and expiration jobs
     public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
-        // must be writen :)
+        
+        this._logger.trace(correlationId, "Jobs controller clean procedure start.");
+        //delete all job with 0 try counter
+        let filter = FilterParams.fromTuples(
+            'try_counter', 0
+        );
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
+                callback(err);
+            }
+        });
+
+        //delete all job with expired execution_time
+        filter = FilterParams.fromTuples(
+            'execution_time_max', new Date()
+        );
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
+                callback(err);
+            }
+        });
+
+        //delete all job with expired execution_time
+        filter = FilterParams.fromTuples(
+            'compleated_max', new Date()
+        );
+        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+            if (err!= null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");     
+            }
+            this._logger.trace(correlationId, "Jobs controller clean procedure end.");
+            callback(err);
+        });
+
     }
 }

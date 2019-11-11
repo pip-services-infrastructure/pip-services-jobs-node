@@ -76,6 +76,8 @@ Besides component descriptor it doesn't expect configuration options.
 Example:
 ```yaml
 - descriptor: "pip-services-jobs:controller:default:default:1.0"
+  options:
+    clean_interval: 60000
 ```
 
 ## <a name="service"></a> Services

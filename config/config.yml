@@ -34,6 +34,8 @@
 
 # Controller
 - descriptor: "jobs:controller:default:default:1.0"
+  options:
+    clean_interval: 60000
 
 # Shared HTTP Endpoint
 - descriptor: "pip-services:endpoint:http:default:1.0"

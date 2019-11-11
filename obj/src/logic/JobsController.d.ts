@@ -1,4 +1,4 @@
-import { FilterParams } from 'pip-services3-commons-node';
+import { FilterParams, IOpenable } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 import { ConfigParams } from 'pip-services3-commons-node';
@@ -9,12 +9,20 @@ import { CommandSet } from 'pip-services3-commons-node';
 import { ICommandable } from 'pip-services3-commons-node';
 import { JobV1 } from '../../src/data/version1/JobV1';
 import { IJobsController } from './IJobsController';
-import { NewJobV1 } from '..';
-export declare class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable {
+import { NewJobV1 } from '../data/version1/NewJobV1';
+export declare class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable, IOpenable {
     private _persistence;
     private _commandSet;
+    private isOpenFlag;
+    private _fixeRateTimer;
+    private _config;
+    private cleanInterval;
+    private _logger;
     constructor();
     configure(config: ConfigParams): void;
+    open(correlationId: string, callback?: (err: any) => void): void;
+    isOpen(): boolean;
+    close(correlationId: string, callback?: (err: any) => void): void;
     setReferences(references: IReferences): void;
     getCommandSet(): CommandSet;
     addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
