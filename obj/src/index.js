@@ -9,4 +9,5 @@ __export(require("./persistence"));
 __export(require("./logic"));
 __export(require("./container"));
 __export(require("./build"));
+__export(require("./clients"));
 //# sourceMappingURL=index.js.map
