@@ -106,6 +106,8 @@ Example of microservice configuration
   path: "./data/blobs"
 
 - descriptor: "pip-services-jobs:controller:default:default:1.0"
+  options:
+    clean_interval: 60000
 
 - descriptor: "pip-services-jobs:service:http:default:1.0"
   connection:
@@ -115,7 +117,7 @@ Example of microservice configuration
 }
 ```
  
-For more information on the microservice configuration see [Configuration Guide](Configuration.md).
+For more information on the microservice configuration see [Configuration Guide](doc/Configuration.md).
 
 Start the microservice using the command:
 ```bash
@@ -252,7 +254,7 @@ const JOB2: NewJobV1 = {
 Get existing job by job_id:
 ```typescript    
 
-    client.deleteJobById("123", JOB1.id, (err, job){
+    client.deleteJobById("123", JOB1.id, (err, job) => {
         if (err != null) {
             console.error('Can\'t get job!');
             console.error(err);
@@ -279,12 +281,29 @@ Get jobs by filter:
             }
         }
     });
+
+client.getJobs("123", FilterParams.fromTuples(
+                        'lock', 'false'
+                    ), 
+                    new PagingParams(), (err, page) => {
+        if (err != null) {
+            console.error('Can\'t get jobs!');
+            console.error(err);
+        } else {
+            console.dir('Jobs was recived successfull');
+            for (let job in page.data) {
+                console.dir('Job:');
+                console.dir(job.toString());
+            }
+        }
+    });
+
 ```
 
 Delete existing job by job_id:
 ```typescript    
 
-    client.deleteJobById("123", JOB1.id, (err, job){
+    client.deleteJobById("123", JOB1.id, (err, job) => {
         if (err != null) {
             console.error('Can\'t delete job!');
             console.error(err);
@@ -299,7 +318,7 @@ Delete existing job by job_id:
 Delete all job:
 ```typescript    
 
-    client.deleteJobs("123", (err){
+    client.deleteJobs("123", (err) => {
         if (err != null) {
             console.error('Can\'t delete jobs!');
             console.error(err);
@@ -310,12 +329,12 @@ Delete all job:
 ```
 
 
-*Control functions*
+## Control functions
 
 Start job:
 ```typescript
 
-    client.startJob("123", JOB1, (err, job)=>{
+    client.startJob("123", JOB1, (err, job) => {
         if (err != null) {
             bconsole.error('Can\'t start jo!');
             console.error(err);
@@ -328,7 +347,7 @@ Start job:
 Extend work time existing job:
 ```typescript
 
-    client.extendJob("123", JOB1, (err, job)=>{
+    client.extendJob("123", JOB1, (err, job) => {
         if (err != null) {
             console.error('Can\'t extend job!');
             console.error(err);
@@ -341,7 +360,7 @@ Extend work time existing job:
 Abort running job:
 ```typescript
 
-    client.abortJob("123", JOB1, (err, job)=>{
+    client.abortJob("123", JOB1, (err, job) => {
         if (err != null) {
             console.error('Can\'t abort job!');
             console.error(err);
@@ -354,7 +373,7 @@ Abort running job:
 Compleate running job:
 ```typescript
 
-    client.compleateJob("123", JOB1, (err, job)=>{
+    client.compleateJob("123", JOB1, (err, job) => {
         if (err != null) {
             console.error('Can\'t compleate job!');
             console.error(err);
