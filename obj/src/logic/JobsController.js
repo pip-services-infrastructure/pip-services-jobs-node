@@ -12,6 +12,7 @@ const pip_services3_components_node_1 = require("pip-services3-components-node")
 class JobsController {
     constructor() {
         this.cleanInterval = 1000 * 60;
+        this.startJobMaxRetries = 10;
         this._logger = new pip_services3_components_node_1.CompositeLogger();
         this.isOpenFlag = false;
         this._fixeRateTimer = new pip_services3_commons_node_4.FixedRateTimer();
@@ -20,6 +21,7 @@ class JobsController {
         this._config = config;
         this._logger.configure(config);
         this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000 * 60);
+        this.startJobMaxRetries = config.getAsLongWithDefault('options.max_retries', 10);
     }
     open(correlationId, callback) {
         this._fixeRateTimer.setCallback(() => {
@@ -77,28 +79,42 @@ class JobsController {
     }
     // Start job
     startJob(correlationId, job, callback) {
-        if (job.try_counter > 0) {
+        let curentDt = new Date();
+        if (job.try_counter > 0 &&
+            (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
+            job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
-            job.started = new Date();
-            job.locked_until = new Date(job.started.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
-            job.try_counter = job.try_counter - 1;
+            job.started = curentDt;
+            job.locked_until = new Date(job.started.valueOf() + job.timeout);
+            job.try_counter = job.try_counter + 1;
             this._persistence.update(correlationId, job, callback);
         }
         else {
             callback(null, null);
         }
     }
+    // Start job by type
+    startJobByType(correlationId, jobType, timeout, callback) {
+        let curentDt = new Date();
+        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('type', jobType, 'lock', false, 'curent_dt', curentDt, 'max_tries', this.startJobMaxRetries);
+        let job = new JobV1_1.JobV1();
+        job.lock = true;
+        job.started = curentDt;
+        job.timeout = timeout;
+        job.locked_until = new Date(curentDt.valueOf() + timeout);
+        this._persistence.updateJobForStart(correlationId, filter, job, callback);
+    }
     // Extend job execution limit on timeout value
     extendJob(correlationId, job, callback) {
-        job.execute_until = new Date(job.execute_until.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
-        job.locked_until = new Date(job.locked_until.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
+        job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
+        job.locked_until = new Date(job.locked_until.valueOf() + job.timeout.valueOf());
         this._persistence.update(correlationId, job, callback);
     }
     // Abort job
     abortJob(correlationId, job, callback) {
         job.lock = false;
-        job.locked_until = undefined;
-        job.started = undefined;
+        job.locked_until = null;
+        job.started = null;
         this._persistence.update(correlationId, job, callback);
     }
     // Compleate job

@@ -7,17 +7,20 @@ import { PagingParams } from 'pip-services3-commons-node';
 
 import { JobV1 } from '../../src/data/version1/JobV1';
 import { IJobsPersistence } from '../../src/persistence/IJobsPersistence';
+import { cursorTo } from 'readline';
+
+let curentDate = new Date();
 
 const JOB1: JobV1 = {
     id: "Job_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*30),
+    timeout: 1000 * 60 * 30,
     created: new Date("2019-11-07T17:30:00"),
     started: new Date("2019-11-07T17:30:20"),
     locked_until: new Date("2019-11-07T18:00:20"),
-    execute_until: new Date("2019-11-07T19:30:00"),
+    execute_until: new Date(curentDate.valueOf() + 1000*60*5),
     completed: null,
     lock: false,
     try_counter: 5
@@ -27,13 +30,13 @@ const JOB2: JobV1 = {
     type: "t1",
     ref_id: "obj_1fsd",
     params: null,
-    timeout: new Date(1000*60*15),
+    timeout: 1000 * 60 * 15,
     created: new Date("2019-11-07T17:35:00"),
     started: new Date("2019-11-07T17:35:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
-    execute_until: new Date("2019-11-07T18:20:00"),
+    execute_until: new Date(curentDate.valueOf() + 1000*60*10),
     completed: null,
-    lock: false,
+    lock: true,
     try_counter: 3
 };
 const JOB3: JobV1 = {
@@ -41,13 +44,13 @@ const JOB3: JobV1 = {
     type: "t2",
     ref_id: "obj_3fsd",
     params: null,
-    timeout: new Date(1000*60*10),
+    timeout: 1000 * 60 * 10,
     created: new Date("2019-11-07T17:40:00"),
     started: new Date("2019-11-07T17:40:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
-    execute_until: new Date("2019-11-07T19:30:00"),
+    execute_until: new Date(curentDate.valueOf() + 1000*60*15),
     completed: null,
-    lock: true,
+    lock: false,
     try_counter: 2
 };
 
@@ -79,7 +82,7 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB1.locked_until.valueOf(), job.locked_until.valueOf());
                         assert.equal(JOB1.lock, job.lock);
                         assert.equal(JOB1.try_counter, job.try_counter);
-                        
+
                         callback();
                     }
                 );
@@ -179,7 +182,7 @@ export class JobsPersistenceFixture {
             // Get job by id
             (callback) => {
                 this._persistence.getOneById(
-                    null, 
+                    null,
                     job1.id,
                     (err, job) => {
                         assert.isNull(err);
@@ -393,7 +396,7 @@ export class JobsPersistenceFixture {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'execute_until_min', new Date("2019-11-07T18:25:00")
+                        'execute_until_min', new Date(curentDate.valueOf() + 1000*60*8)
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -405,6 +408,31 @@ export class JobsPersistenceFixture {
                     }
                 )
             },
+            // Test updateJobForStart
+            (callback) => {
+                let tmpJob = new JobV1();
+                let curentDt = new Date();
+                tmpJob.lock = true;
+                tmpJob.started = curentDt;
+                tmpJob.timeout = JOB3.timeout;
+                tmpJob.locked_until = new Date(curentDt.valueOf() + JOB3.timeout);
+
+                this._persistence.updateJobForStart(null, FilterParams.fromTuples(
+                    'type', 't2',
+                    'lock', false,
+                    'max_retries', '6',
+                    'curent_dt', curentDt
+                ), tmpJob, (err, job) => {
+                    assert.isNull(err);
+                    assert.isObject(job);
+                    assert.equal(true, job.lock);
+                    assert.equal(JOB3.try_counter + 1, job.try_counter);
+                    assert.equal(curentDt.getUTCMilliseconds(), job.started.getUTCMilliseconds());
+                    let newLockUntil = new Date (curentDt.valueOf() + job.timeout);
+                    assert.equal(newLockUntil.getUTCMilliseconds(), job.locked_until.getUTCMilliseconds());
+                    callback();
+                })
+            }
         ], done);
     }
 }

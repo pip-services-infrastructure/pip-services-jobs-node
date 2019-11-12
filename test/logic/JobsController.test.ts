@@ -14,31 +14,31 @@ import { JobsController } from '../../src/logic/JobsController';
 import { NewJobV1 } from '../../src/data/version1/NewJobV1';
 
 const JOB1: NewJobV1 = {
-    id: "Job1_t1_0fsd",
+    //id: "Job1_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*30), // 30 min
-    ttl:new Date(1000*60*60*3), // 3 hour
-    retries: 5
+    //timeout: 1000*60*30, // 30 min
+    ttl:1000*60*60*3, // 3 hour
+    //retries: 5
 };
 const JOB2: NewJobV1 = {
-    id: "Job2_t1_0fsd",
+    //id: "Job2_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*15), // 15 min
-    ttl: new Date(1000*60*60), // 1 hour
-    retries: 3
+    //timeout: new Date(1000*60*15), // 15 min
+    ttl: 1000*60*60, // 1 hour
+    //retries: 3
 };
 const JOB3: NewJobV1 = {
-    id: "Job3_t2_3fsd",
+    //id: "Job3_t2_3fsd",
     type: "t2",
     ref_id: "obj_3fsd",
     params: null,
-    timeout: new Date(1000*60*10), // 10 minutes
-    ttl: new Date(1000*60*30), // 30 minutes
-    retries: 2
+    //timeout: new Date(1000*60*10), // 10 minutes
+    ttl: 1000*60*30, // 30 minutes
+    //retries: 2
 };
 
 suite('JobsController', () => {
@@ -79,11 +79,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        //assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        //assert.equal(JOB1.timeout.valueOf(), job.timeout.valueOf());
+                        //assert.equal(JOB1.retries, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -91,7 +91,7 @@ suite('JobsController', () => {
                         assert.isUndefined(job.completed);
                         assert.isUndefined(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+                        job1 = job;                        
                         callback();
                     }
                 );
@@ -105,11 +105,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -131,11 +131,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB3.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(JOB3.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB3.retries, job.try_counter);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -143,7 +143,7 @@ suite('JobsController', () => {
                         assert.isUndefined(job.completed);
                         assert.isUndefined(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+                              
                         callback();
                     }
                 );
@@ -152,15 +152,15 @@ suite('JobsController', () => {
             (callback) => {
                 controller.getJobById(
                     null,
-                    JOB1.id,
+                    job1.id,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(job1.timeout, job.timeout);
+                        assert.equal(job1.try_counter, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -261,11 +261,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -273,7 +273,7 @@ suite('JobsController', () => {
                         assert.isUndefined(job.completed);
                         assert.isUndefined(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+                        job1 = job;                        
                         callback();
                     }
                 );
@@ -287,11 +287,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -313,11 +313,11 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        assert.equal(JOB3.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(JOB3.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB3.retries, job.try_counter);
+                        assert.equal(0, job.timeout.valueOf());
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -334,15 +334,15 @@ suite('JobsController', () => {
             (callback) => {
                 controller.getJobById(
                     null,
-                    JOB1.id,
+                    job1.id,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(JOB1.id, job.id);
+                        assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.getUTCMilliseconds(), job.timeout.getUTCMilliseconds());
-                        assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(job1.timeout, job.timeout);
+                        assert.equal(job1.try_counter, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -373,9 +373,10 @@ suite('JobsController', () => {
             },
             // Test start job
             (callback)=>{
-                controller.startJob(
+                controller.startJobByType(
                     null,
-                    job1,
+                    job1.type,
+                    1000*60*10,
                     (err, job)=>{
                         assert.isNull(err);
                         assert.isObject(job);
@@ -389,7 +390,7 @@ suite('JobsController', () => {
             },
             // Test extend job
             (callback)=>{
-                let newExeUntil = new Date (job1.execute_until.getUTCMilliseconds() + job1.timeout.getUTCMilliseconds());
+                let newExeUntil = new Date (job1.execute_until.valueOf() + job1.timeout);
                 controller.extendJob(
                     null,
                     job1,

@@ -7,6 +7,7 @@ export interface IJobsPersistence {
     getOneById(correlationId: string, id: string, callback: (err: any, item: JobV1) => void): void;
     create(correlationId: string, item: JobV1, callback: (err: any, item: JobV1) => void): void;
     update(correlationId: string, item: JobV1, callback: (err: any, item: JobV1) => void): void;
+    updateJobForStart(correlationId: string, filter: FilterParams, item: JobV1, callback: (err: any, job: JobV1) => void): void;
     deleteById(correlationId: string, id: string, callback: (err: any, item: JobV1) => void): void;
     deleteByFilter(correlationId: string, filter: FilterParams, callback: (err: any) => void): void;
 }

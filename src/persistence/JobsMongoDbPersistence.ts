@@ -8,13 +8,11 @@ import { IdentifiableMongoDbPersistence } from 'pip-services3-mongodb-node';
 
 import { JobV1 } from '../data/version1/JobV1';
 import { IJobsPersistence } from './IJobsPersistence';
-import { JobsMongoDbSchema } from './JobsMongoDbSchema';
 
 export class JobsMongoDbPersistence
     extends IdentifiableMongoDbPersistence<JobV1, string>
     implements IJobsPersistence {
     constructor() {
-        //super('jobs', JobsMongoDbSchema());
         super('jobs');
         this._maxPageSize = 1000;
     }
@@ -100,12 +98,72 @@ export class JobsMongoDbPersistence
         return criteria.length > 0 ? { $and: criteria } : null;
     }
 
+    private composeFilterStartJob(filter: FilterParams): any {
+        filter = filter || new FilterParams();
+
+        let andCriteria = [];
+
+        let type = filter.getAsNullableString('type');
+        if (type != null)
+            andCriteria.push({ type: type });
+
+        let lock = filter.getAsNullableBoolean('lock');
+        if (lock != null)
+            andCriteria.push({ lock: lock });
+
+        let max_retries = filter.getAsNullableInteger('max_retries');
+        if (max_retries != null)
+            andCriteria.push({ try_counter: { $lt: max_retries } });
+
+        let curent_dt = filter.getAsNullableDateTime('curent_dt');
+        if (curent_dt != null) {
+            andCriteria.push({ $or: [{ locked_until: null }, { locked_until: { $lt: curent_dt } }] });
+            andCriteria.push({ $or: [{ execute_until: null }, { execute_until: { $gte: curent_dt } }] });
+        }
+
+        return andCriteria.length > 0 ? { $and: andCriteria } : null;
+    }
+    // select item by filter and update
+    public updateJobForStart(correlationId: string, filter: FilterParams, item: JobV1,
+        callback: (err: any, job: JobV1) => void): void {
+        if (item == null) {
+            if (callback) callback(null, null);
+            return;
+        }
+
+        let newItem = _.omit(item, 'id');
+        newItem = this.convertFromPublic(newItem);
+
+        let update = {
+            $set: {
+                timeout: newItem.timeout,
+                started: newItem.started,
+                locked_until: newItem.locked_until,
+                lock: newItem.lock,
+            },
+            $inc: { try_counter: 1 }
+        };
+
+        let options = {
+            returnOriginal: false
+        };
+        this._collection.findOneAndUpdate(this.composeFilterStartJob(filter), update, options, (err, result) => {
+            if (!err)
+                this._logger.trace(correlationId, "Updated in %s with id = %s", this._collection, item.id);
+
+            if (callback) {
+                newItem = result ? this.convertToPublic(result.value) : null;
+                callback(err, newItem);
+            }
+        });
+    }
+
     public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<JobV1>) => void): void {
         super.getPageByFilter(correlationId, this.composeFilter(filter), paging, null, null, callback);
     }
 
-    public deleteByFilter(correlationId: string, filter:FilterParams, callback: (err: any) => void): void {
+    public deleteByFilter(correlationId: string, filter: FilterParams, callback: (err: any) => void): void {
         super.deleteByFilter(correlationId, this.composeFilter(filter), callback);
     }
 

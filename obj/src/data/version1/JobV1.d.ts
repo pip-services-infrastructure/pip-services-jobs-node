@@ -4,12 +4,12 @@ export declare class JobV1 {
     type: string;
     ref_id: string;
     params: any;
-    timeout: Date;
+    timeout: number;
     created: Date;
-    started?: Date;
-    locked_until?: Date;
+    started: Date;
+    locked_until: Date;
     execute_until: Date;
-    completed?: Date;
+    completed: Date;
     lock: boolean;
     try_counter: number;
     constructor(newJob?: NewJobV1);

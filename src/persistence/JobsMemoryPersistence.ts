@@ -1,6 +1,6 @@
 let _ = require('lodash');
 
-import { FilterParams } from 'pip-services3-commons-node';
+import { FilterParams, DateTimeConverter } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 
@@ -25,7 +25,7 @@ export class JobsMemoryPersistence
         let id = filter.getAsNullableString('id');
         let type = filter.getAsNullableString('type');
         let ref_id = filter.getAsNullableString('ref_id');
-        
+
         let created = filter.getAsNullableDateTime('created');
         let created_min = filter.getAsNullableDateTime('created_min');
         let created_max = filter.getAsNullableDateTime('created_max');
@@ -97,12 +97,59 @@ export class JobsMemoryPersistence
         };
     }
 
+    private composeFilterStartJob(filter: FilterParams): any {
+        filter = filter || new FilterParams();
+
+        let type = filter.getAsNullableString('type');
+        let lock = filter.getAsNullableBoolean('lock');
+        let max_retries = filter.getAsNullableInteger('max_retries');
+        let curent_dt = filter.getAsNullableDateTime('curent_dt');
+
+        return (item) => {
+            if (type != null && item.type != type)
+                return false;
+            if (lock != null && item.lock != lock)
+                return false;
+            if (max_retries != null && item.try_counter > max_retries)
+                return false;
+            if (curent_dt != null) {
+                if (item.locked_until != null && item.locked_until.valueOf() >= curent_dt.valueOf())
+                    return false;
+                if (item.execute_until != null && item.execute_until.valueOf() < curent_dt.valueOf())
+                    return false;
+            }
+            return true;
+        };
+    }
+
+    // select item by filter and update
+    public updateJobForStart(correlationId: string, filter: FilterParams, item: JobV1,
+        callback: (err: any, job: JobV1) => void): void {
+
+        super.getPageByFilter(correlationId, this.composeFilterStartJob(filter), new PagingParams, null, null, (err, page) => {
+            if (err != null) {
+                callback(err, null);
+                return;
+            }
+            if (page.data.length > 0) {
+                let job = page.data[0];
+                job.started = item.started;
+                job.locked_until = new Date(job.started.getUTCMilliseconds() + job.timeout);
+                job.lock = item.lock;
+                job.try_counter = job.try_counter + 1;
+                this.update(correlationId, job, callback);
+            } else {
+                callback(err, null);
+            }
+        })
+    }
+
     public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<JobV1>) => void): void {
         super.getPageByFilter(correlationId, this.composeFilter(filter), paging, null, null, callback);
     }
 
-    public deleteByFilter(correlationId:string, filter:FilterParams, callback:(err:any)=>void):void {
+    public deleteByFilter(correlationId: string, filter: FilterParams, callback: (err: any) => void): void {
         super.deleteByFilter(correlationId, this.composeFilter(filter), callback);
     }
 

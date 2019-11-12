@@ -1,10 +1,10 @@
 
 export class NewJobV1 {
-    id: string;
+    //id: string;
     type: string;
     ref_id: string;
     params: any;
-    timeout: Date;
-    retries: number;
-    ttl: Date;
+    //timeout: number;
+    //retries: number;
+    ttl: number; // time to live job in ms
 }

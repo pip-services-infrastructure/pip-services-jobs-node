@@ -21,14 +21,14 @@ import { NewJobV1 } from '../data/version1/NewJobV1';
 import { FixedRateTimer } from 'pip-services3-commons-node';
 import { CompositeLogger } from 'pip-services3-components-node';
 
-
 export class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable, IOpenable {
     private _persistence: IJobsPersistence;
     private _commandSet: JobsCommandSet;
     private isOpenFlag: boolean;
     private _fixeRateTimer: FixedRateTimer;
     private _config: ConfigParams;
-    private cleanInterval:number = 1000*60;
+    private cleanInterval: number = 1000 * 60;
+    private startJobMaxRetries = 10;
     private _logger: CompositeLogger = new CompositeLogger();
 
     public constructor() {
@@ -39,7 +39,8 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     public configure(config: ConfigParams): void {
         this._config = config;
         this._logger.configure(config);
-        this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000*60);
+        this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000 * 60);
+        this.startJobMaxRetries = config.getAsLongWithDefault('options.max_retries', 10);
     }
 
     public open(correlationId: string, callback?: (err: any) => void): void {
@@ -107,27 +108,48 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
     // Start job
     public startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
-        if (job.try_counter > 0) {
+        let curentDt = new Date();
+        if (job.try_counter > 0 &&
+            (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
+            job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
-            job.started = new Date();
-            job.locked_until = new Date(job.started.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
-            job.try_counter = job.try_counter - 1;
+            job.started = curentDt;
+            job.locked_until = new Date(job.started.valueOf() + job.timeout);
+            job.try_counter = job.try_counter + 1;
             this._persistence.update(correlationId, job, callback);
         } else {
             callback(null, null);
         }
     }
+
+    // Start job by type
+    startJobByType(correlationId: string, jobType: string, timeout:number, callback: (err: any, job: JobV1) => void): void {
+        let curentDt = new Date();
+        let filter = FilterParams.fromTuples(
+            'type', jobType,
+            'lock', false,
+            'curent_dt', curentDt,
+            'max_tries', this.startJobMaxRetries
+        );
+        let job = new JobV1();
+        job.lock = true;
+        job.started = curentDt;
+        job.timeout = timeout;
+        job.locked_until = new Date(curentDt.valueOf() + timeout);
+        this._persistence.updateJobForStart(correlationId, filter, job, callback);
+    }
+
     // Extend job execution limit on timeout value
     public extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
-        job.execute_until = new Date(job.execute_until.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
-        job.locked_until = new Date(job.locked_until.getUTCMilliseconds() + job.timeout.getUTCMilliseconds());
+        job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
+        job.locked_until = new Date(job.locked_until.valueOf() + job.timeout.valueOf());
         this._persistence.update(correlationId, job, callback);
     }
     // Abort job
     public abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
         job.lock = false;
-        job.locked_until = undefined;
-        job.started = undefined;
+        job.locked_until = null;
+        job.started = null;
         this._persistence.update(correlationId, job, callback);
     }
     // Compleate job
@@ -150,7 +172,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
     // Clean compleated and expiration jobs
     public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
-        
+
         this._logger.trace(correlationId, "Jobs controller clean procedure start.");
         //delete all job with 0 try counter
         let filter = FilterParams.fromTuples(
@@ -179,8 +201,8 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
             'compleated_max', new Date()
         );
         this._persistence.deleteByFilter(correlationId, filter, (err) => {
-            if (err!= null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");     
+            if (err != null) {
+                this._logger.error(correlationId, err, "Jobs controller clean error:");
             }
             this._logger.trace(correlationId, "Jobs controller clean procedure end.");
             callback(err);
