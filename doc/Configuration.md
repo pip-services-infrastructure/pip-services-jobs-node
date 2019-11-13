@@ -77,7 +77,10 @@ Example:
 ```yaml
 - descriptor: "pip-services-jobs:controller:default:default:1.0"
   options:
+    # Interval beatween call garbage collector for delete old jobs, if clean_interval=0 GC is stop 
     clean_interval: 60000
+    # Max count of restarts for one job
+    max_retries: 10
 ```
 
 ## <a name="service"></a> Services

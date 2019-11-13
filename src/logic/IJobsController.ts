@@ -25,6 +25,6 @@ export interface IJobsController {
     deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Remove all jobs
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
-    // Clean compleated and expiration jobs
+    // Clean completed and expiration jobs
     cleanJobs(correlationId: string, callback?: (err: any) => void): void;
 }

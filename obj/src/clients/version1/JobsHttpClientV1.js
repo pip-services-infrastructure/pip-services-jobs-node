@@ -16,11 +16,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -34,11 +33,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -51,11 +49,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 return;
             }
             for (let job of page.data) {
-                job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-                job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             }
             callback(err, page);
@@ -70,11 +67,28 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
+            job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
+            callback(err, job);
+        });
+    }
+    // Start fist free job by type
+    startJobByType(correlationId, jobType, timeout, callback) {
+        this.callCommand('start_job_by_type', correlationId, {
+            type: jobType,
+            timeout: timeout
+        }, (err, job) => {
+            if (job == null) {
+                callback(err, job);
+                return;
+            }
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
+            job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -88,11 +102,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -106,11 +119,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -124,11 +136,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -142,11 +153,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });
@@ -160,11 +170,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
                 callback(err, job);
                 return;
             }
-            job.completed = _.isUndefined(job.completed) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed);
-            job.timeout = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.timeout);
-            job.started = _.isUndefined(job.started) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started);
+            job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
+            job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
-            job.locked_until = _.isUndefined(job.locked_until) ? undefined : pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until);
+            job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
             callback(err, job);
         });

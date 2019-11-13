@@ -27,6 +27,13 @@ export class JobsNullClientV1 implements IJobsClientV1 {
         callback: (err: any, job: JobV1) => void): void {
         callback(null, null);
     }
+
+    // Start fist free job by type
+    public startJobByType(correlationId: string, jobType: string, timeout: number,
+        callback: (err: any, job: JobV1) => void): void {
+        callback(null, null);
+    }
+
     // Extend job execution limit on timeout value
     public extendJob(correlationId: string, job: JobV1,
         callback: (err: any, job: JobV1) => void): void {
@@ -55,9 +62,5 @@ export class JobsNullClientV1 implements IJobsClientV1 {
 
         callback(null);
     }
-      // Clean compleated and expiration jobs
-    // public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
-    //     callback(null);
-    // }
 
 }

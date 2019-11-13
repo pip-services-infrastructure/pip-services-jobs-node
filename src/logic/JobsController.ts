@@ -27,7 +27,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     private isOpenFlag: boolean;
     private _fixeRateTimer: FixedRateTimer;
     private _config: ConfigParams;
-    private cleanInterval: number = 1000 * 60;
+    private cleanInterval: number = 1000 * 60 * 5;
     private startJobMaxRetries = 10;
     private _logger: CompositeLogger = new CompositeLogger();
 
@@ -47,8 +47,10 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
         this._fixeRateTimer.setCallback(() => {
             this.cleanJobs(correlationId);
         });
-        this._fixeRateTimer.setInterval(this.cleanInterval);
-        this._fixeRateTimer.start();
+        if (this.cleanInterval > 0) {
+            this._fixeRateTimer.setInterval(this.cleanInterval);
+            this._fixeRateTimer.start();
+        }
         this.isOpenFlag = true;
         this._logger.trace(correlationId, "Jobs controller is opened");
         if (callback)
@@ -60,7 +62,9 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
 
     public close(correlationId: string, callback?: (err: any) => void): void {
-        this._fixeRateTimer.stop();
+        if (this._fixeRateTimer.isStarted) {
+            this._fixeRateTimer.stop();
+        }
         this.isOpenFlag = false;
         this._logger.trace(correlationId, "Jobs controller is closed");
         if (callback)
@@ -109,7 +113,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     // Start job
     public startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
         let curentDt = new Date();
-        if (job.try_counter > 0 &&
+        if (job.try_counter < this.startJobMaxRetries &&
             (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
             job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
@@ -123,7 +127,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
 
     // Start job by type
-    startJobByType(correlationId: string, jobType: string, timeout:number, callback: (err: any, job: JobV1) => void): void {
+    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
         let curentDt = new Date();
         let filter = FilterParams.fromTuples(
             'type', jobType,
@@ -148,7 +152,8 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     // Abort job
     public abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
         job.lock = false;
-        job.locked_until = null;
+        //job.locked_until = null;
+        // stay locked time, next start can be after locked_until expired
         job.started = null;
         this._persistence.update(correlationId, job, callback);
     }
@@ -170,35 +175,21 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     public deleteJobs(correlationId: string, callback?: (err: any) => void): void {
         this._persistence.deleteByFilter(correlationId, new FilterParams, callback);
     }
-    // Clean compleated and expiration jobs
+    // Clean completed and expiration jobs
     public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
 
+        let curentDt = new Date();
+
         this._logger.trace(correlationId, "Jobs controller clean procedure start.");
-        //delete all job with 0 try counter
+        //delete all job with  try counter >= startJobMaxRetries
+        //delete all job with expired execution_time
+        //delete all job with expired execution_time
         let filter = FilterParams.fromTuples(
-            'try_counter', 0
-        );
-        this._persistence.deleteByFilter(correlationId, filter, (err) => {
-            if (err != null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");
-                callback(err);
-            }
-        });
+            'criteria', 'or',
+            'try_counter_min', this.startJobMaxRetries,
+            'execute_until_max', curentDt,
+            'completed_max', curentDt
 
-        //delete all job with expired execution_time
-        filter = FilterParams.fromTuples(
-            'execution_time_max', new Date()
-        );
-        this._persistence.deleteByFilter(correlationId, filter, (err) => {
-            if (err != null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");
-                callback(err);
-            }
-        });
-
-        //delete all job with expired execution_time
-        filter = FilterParams.fromTuples(
-            'compleated_max', new Date()
         );
         this._persistence.deleteByFilter(correlationId, filter, (err) => {
             if (err != null) {

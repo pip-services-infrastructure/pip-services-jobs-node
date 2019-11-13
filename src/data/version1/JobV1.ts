@@ -25,11 +25,15 @@ export class JobV1 {
         this.created = curentDt;
         this.try_counter = 0;
         this.timeout = 0;
+
+        this.completed = null;
+        this.started = null;
+        this.locked_until = null;
+        this.execute_until = null;
+        
         if (newJob) {
-            //this.id = newJob.id;
             this.type = newJob.type;
             this.ref_id = newJob.ref_id;
-            //this.timeout = newJob.timeout;
             this.params = newJob.params;
             this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
         }

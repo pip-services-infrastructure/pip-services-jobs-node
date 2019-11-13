@@ -32,51 +32,101 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
         let lock = filter.getAsNullableBoolean('lock');
         let try_counter = filter.getAsNullableInteger('try_counter');
         let try_counter_min = filter.getAsNullableInteger('try_counter_min');
-        return (item) => {
-            if (id != null && item.id != id)
+        let filterCriteria = filter.getAsNullableString('criteria');
+        if (filterCriteria != null && filterCriteria == 'or') { // or criteria
+            return (item) => {
+                if (id != null && item.id == id)
+                    return true;
+                if (type != null && item.type == type)
+                    return true;
+                if (ref_id != null && item.ref_id == ref_id)
+                    return true;
+                if (created != null && item.created.valueOf() == created.valueOf())
+                    return true;
+                if (created_min != null && item.created.valueOf() >= created_min.valueOf())
+                    return true;
+                if (created_max != null && item.created.valueOf() <= created_max.valueOf())
+                    return true;
+                if (started != null && item.started && item.started.valueOf() == started.valueOf())
+                    return true;
+                if (started_min != null && item.started && item.started.valueOf() >= started_min.valueOf())
+                    return true;
+                if (started_max != null && item.started && item.started.valueOf() <= started_max.valueOf())
+                    return true;
+                if (locked_until != null && item.locked_until && item.locked_until.valueOf() == locked_until.valueOf())
+                    return true;
+                if (locked_until_min != null && item.locked_until && item.locked_until.valueOf() >= locked_until_min.valueOf())
+                    return true;
+                if (locked_until_max != null && item.locked_until && item.locked_until.valueOf() <= locked_until_max.valueOf())
+                    return true;
+                if (execute_until != null && item.execute_until.valueOf() == execute_until.valueOf())
+                    return true;
+                if (execute_until_min != null && item.execute_until.valueOf() >= execute_until_min.valueOf())
+                    return true;
+                if (execute_until_max != null && item.execute_until.valueOf() <= execute_until_max.valueOf())
+                    return true;
+                if (completed != null && item.completed && item.completed.valueOf() == completed.valueOf())
+                    return true;
+                if (completed_min != null && item.completed && item.completed.valueOf() >= completed_min.valueOf())
+                    return true;
+                if (completed_max != null && item.completed && item.completed.valueOf() <= completed_max.valueOf())
+                    return true;
+                if (lock != null && item.lock == lock)
+                    return true;
+                if (try_counter != null && item.try_counter == try_counter)
+                    return true;
+                if (try_counter_min != null && item.try_counter >= try_counter_min)
+                    return true;
                 return false;
-            if (type != null && item.type != type)
-                return false;
-            if (ref_id != null && item.ref_id != ref_id)
-                return false;
-            if (created != null && item.created.valueOf() != created.valueOf())
-                return false;
-            if (created_min != null && item.created.valueOf() <= created_min.valueOf())
-                return false;
-            if (created_max != null && item.created.valueOf() >= created_max.valueOf())
-                return false;
-            if (started != null && item.started.valueOf() != started.valueOf())
-                return false;
-            if (started_min != null && item.started.valueOf() <= started_min.valueOf())
-                return false;
-            if (started_max != null && item.started.valueOf() >= started_max.valueOf())
-                return false;
-            if (locked_until != null && item.locked_until.valueOf() != locked_until.valueOf())
-                return false;
-            if (locked_until_min != null && item.locked_until.valueOf() <= locked_until_min.valueOf())
-                return false;
-            if (locked_until_max != null && item.locked_until.valueOf() >= locked_until_max.valueOf())
-                return false;
-            if (execute_until != null && item.execute_until.valueOf() != execute_until.valueOf())
-                return false;
-            if (execute_until_min != null && item.execute_until.valueOf() <= execute_until_min.valueOf())
-                return false;
-            if (execute_until_max != null && item.execute_until.valueOf() >= execute_until_max.valueOf())
-                return false;
-            if (completed != null && item.completed.valueOf() != completed.valueOf())
-                return false;
-            if (completed_min != null && item.completed.valueOf() <= completed_min.valueOf())
-                return false;
-            if (completed_max != null && item.completed.valueOf() >= completed_max.valueOf())
-                return false;
-            if (lock != null && item.lock != lock)
-                return false;
-            if (try_counter != null && item.try_counter != try_counter)
-                return false;
-            if (try_counter_min != null && item.try_counter <= try_counter_min)
-                return false;
-            return true;
-        };
+            };
+        }
+        else { // and criteria default
+            return (item) => {
+                if (id != null && item.id != id)
+                    return false;
+                if (type != null && item.type != type)
+                    return false;
+                if (ref_id != null && item.ref_id != ref_id)
+                    return false;
+                if (created != null && item.created.valueOf() != created.valueOf())
+                    return false;
+                if (created_min != null && item.created.valueOf() <= created_min.valueOf())
+                    return false;
+                if (created_max != null && item.created.valueOf() >= created_max.valueOf())
+                    return false;
+                if (started != null && item.started && item.started.valueOf() != started.valueOf())
+                    return false;
+                if (started_min != null && item.started && item.started.valueOf() <= started_min.valueOf())
+                    return false;
+                if (started_max != null && item.started && item.started.valueOf() >= started_max.valueOf())
+                    return false;
+                if (locked_until != null && item.locked_until.valueOf() != locked_until.valueOf())
+                    return false;
+                if (locked_until_min != null && item.locked_until && item.locked_until.valueOf() <= locked_until_min.valueOf())
+                    return false;
+                if (locked_until_max != null && item.locked_until && item.locked_until.valueOf() >= locked_until_max.valueOf())
+                    return false;
+                if (execute_until != null && item.execute_until.valueOf() != execute_until.valueOf())
+                    return false;
+                if (execute_until_min != null && item.execute_until.valueOf() <= execute_until_min.valueOf())
+                    return false;
+                if (execute_until_max != null && item.execute_until.valueOf() >= execute_until_max.valueOf())
+                    return false;
+                if (completed != null && item.completed && item.completed.valueOf() != completed.valueOf())
+                    return false;
+                if (completed_min != null && item.completed && item.completed.valueOf() <= completed_min.valueOf())
+                    return false;
+                if (completed_max != null && item.completed && item.completed.valueOf() >= completed_max.valueOf())
+                    return false;
+                if (lock != null && item.lock != lock)
+                    return false;
+                if (try_counter != null && item.try_counter != try_counter)
+                    return false;
+                if (try_counter_min != null && item.try_counter <= try_counter_min)
+                    return false;
+                return true;
+            };
+        }
     }
     composeFilterStartJob(filter) {
         filter = filter || new pip_services3_commons_node_1.FilterParams();

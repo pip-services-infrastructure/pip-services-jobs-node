@@ -11,6 +11,8 @@ export interface IJobsClientV1 {
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
     // Start job
     startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    // Start fist free job by type
+    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Extend job execution limit on timeout value
     extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Abort job
@@ -23,6 +25,5 @@ export interface IJobsClientV1 {
     deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Remove all jobs
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
-      // Clean compleated and expiration jobs
-    //cleanJobs(correlationId: string, callback?: (err: any) => void): void;
+      
 }

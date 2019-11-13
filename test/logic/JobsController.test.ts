@@ -19,7 +19,7 @@ const JOB1: NewJobV1 = {
     ref_id: "obj_0fsd",
     params: null,
     //timeout: 1000*60*30, // 30 min
-    ttl:1000*60*60*3, // 3 hour
+    ttl: 1000 * 60 * 60 * 3, // 3 hour
     //retries: 5
 };
 const JOB2: NewJobV1 = {
@@ -28,7 +28,7 @@ const JOB2: NewJobV1 = {
     ref_id: "obj_0fsd",
     params: null,
     //timeout: new Date(1000*60*15), // 15 min
-    ttl: 1000*60*60, // 1 hour
+    ttl: 1000 * 60 * 60, // 1 hour
     //retries: 3
 };
 const JOB3: NewJobV1 = {
@@ -37,7 +37,7 @@ const JOB3: NewJobV1 = {
     ref_id: "obj_3fsd",
     params: null,
     //timeout: new Date(1000*60*10), // 10 minutes
-    ttl: 1000*60*30, // 30 minutes
+    ttl: 1000 * 60 * 30, // 30 minutes
     //retries: 2
 };
 
@@ -79,19 +79,19 @@ suite('JobsController', () => {
                         assert.isNull(err);
 
                         assert.isObject(job);
-                        //assert.equal(JOB1.id, job.id);
+                        assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        //assert.equal(JOB1.timeout.valueOf(), job.timeout.valueOf());
-                        //assert.equal(JOB1.retries, job.try_counter);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                        job1 = job;                        
+                        job1 = job;
                         callback();
                     }
                 );
@@ -113,11 +113,11 @@ suite('JobsController', () => {
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+
                         callback();
                     }
                 );
@@ -139,11 +139,11 @@ suite('JobsController', () => {
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                              
+
                         callback();
                     }
                 );
@@ -164,9 +164,9 @@ suite('JobsController', () => {
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
                         callback();
                     }
@@ -212,7 +212,7 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
 
-                        assert.isNull(job || null);
+                        assert.isNull(job);
 
                         callback();
                     }
@@ -250,7 +250,8 @@ suite('JobsController', () => {
 
 
     test('Control operations', (done) => {
-        let job1:JobV1;
+        let job1: JobV1;
+        let job2: JobV1;
         async.series([
             // Create the first job
             (callback) => {
@@ -269,11 +270,11 @@ suite('JobsController', () => {
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                        job1 = job;                        
+                        job1 = job;
                         callback();
                     }
                 );
@@ -295,11 +296,11 @@ suite('JobsController', () => {
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+
                         callback();
                     }
                 );
@@ -321,11 +322,11 @@ suite('JobsController', () => {
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
-                                                
+
                         callback();
                     }
                 );
@@ -346,9 +347,9 @@ suite('JobsController', () => {
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
-                        assert.isUndefined(job.started);
-                        assert.isUndefined(job.completed);
-                        assert.isUndefined(job.locked_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
                         assert.equal(false, job.lock);
                         callback();
                     }
@@ -367,38 +368,39 @@ suite('JobsController', () => {
                         assert.lengthOf(page.data, 2);
 
                         job1 = page.data[0];
+                        job2 = page.data[1];
                         callback();
                     }
                 )
             },
-            // Test start job
-            (callback)=>{
+            // Test start job by id
+            (callback) => {
                 controller.startJobByType(
                     null,
                     job1.type,
-                    1000*60*10,
-                    (err, job)=>{
+                    1000 * 60 * 10,
+                    (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
                         assert.equal(true, job.lock);
-                        assert.isNotNull(job.locked_until || null);
-                        assert.isNotNull(job.started || null);
+                        assert.isNotNull(job.locked_until);
+                        assert.isNotNull(job.started);
                         job1 = job;
                         callback(err);
                     }
                 );
             },
             // Test extend job
-            (callback)=>{
-                let newExeUntil = new Date (job1.execute_until.valueOf() + job1.timeout);
+            (callback) => {
+                let newExeUntil = new Date(job1.execute_until.valueOf() + job1.timeout);
                 controller.extendJob(
                     null,
                     job1,
-                    (err, job)=>{
+                    (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
                         assert.equal(true, job.lock);
-                       
+
                         assert.equal(newExeUntil.getUTCMilliseconds(), job.execute_until.getUTCMilliseconds());
                         job1 = job;
                         callback(err);
@@ -406,20 +408,208 @@ suite('JobsController', () => {
                 );
             },
             // Test compleate job
-            (callback)=>{
+            (callback) => {
                 controller.compleateJob(
                     null,
                     job1,
-                    (err, job)=>{
+                    (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
                         assert.equal(false, job.lock);
-                        assert.isNotNull(job.completed || null);
+                        assert.isNotNull(job.completed);
                         job1 = job;
                         callback(err);
                     }
                 );
+            },
+            // Test start job
+            (callback) => {
+                job2.timeout = 1000 * 60; // set timeout 1 min
+                controller.startJob(
+                    null,
+                    job2,
+                    (err, job) => {
+                        assert.isNull(err);
+                        assert.isObject(job);
+                        assert.equal(true, job.lock);
+                        assert.isNotNull(job.locked_until);
+                        assert.isNotNull(job.started);
+                        job2 = job;
+                        callback(err);
+                    }
+                );
+            },
+            // Test abort job
+            (callback) => {
+                controller.abortJob(
+                    null,
+                    job2,
+                    (err, job) => {
+                        assert.isNull(err);
+                        assert.isObject(job);
+                        assert.equal(false, job.lock);
+                        assert.isNotNull(job.locked_until);
+                        assert.isNull(job.started);
+                        callback(err);
+                    }
+                );
             }
+        ], done);
+    });
+
+    test('Test clean expired jobs', (done) => {
+
+        let job1: JobV1;
+        let job2: JobV1;
+        let job3: JobV1;
+
+        async.series([
+            // Create the first job
+            (callback) => {
+                controller.addJob(
+                    null,
+                    JOB1,
+                    (err, job) => {
+                        assert.isNull(err);
+
+                        assert.isObject(job);
+                        assert.isNotNull(job.id);
+                        assert.equal(JOB1.type, job.type);
+                        assert.equal(JOB1.ref_id, job.ref_id);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
+                        assert.equal(JOB1.params, job.params);
+                        assert.isNotNull(job.created);
+                        assert.isNotNull(job.execute_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
+                        assert.equal(false, job.lock);
+                        job1 = job;
+                        callback();
+                    }
+                );
+            },
+            // Create the second job
+            (callback) => {
+                controller.addJob(
+                    null,
+                    JOB2,
+                    (err, job) => {
+                        assert.isNull(err);
+
+                        assert.isObject(job);
+                        assert.isNotNull(job.id);
+                        assert.equal(JOB2.type, job.type);
+                        assert.equal(JOB2.ref_id, job.ref_id);
+                        assert.equal(0, job.timeout);
+                        assert.equal(0, job.try_counter);
+                        assert.equal(JOB2.params, job.params);
+                        assert.isNotNull(job.created);
+                        assert.isNotNull(job.execute_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
+                        assert.equal(false, job.lock);
+                        job2 = job;
+                        callback();
+                    }
+                );
+            },
+            // Create the third job
+            (callback) => {
+                controller.addJob(
+                    null,
+                    JOB3,
+                    (err, job) => {
+                        assert.isNull(err);
+
+                        assert.isObject(job);
+                        assert.isNotNull(job.id);
+                        assert.equal(JOB3.type, job.type);
+                        assert.equal(JOB3.ref_id, job.ref_id);
+                        assert.equal(0, job.timeout.valueOf());
+                        assert.equal(0, job.try_counter);
+                        assert.equal(JOB3.params, job.params);
+                        assert.isNotNull(job.created);
+                        assert.isNotNull(job.execute_until);
+                        assert.isNull(job.started);
+                        assert.isNull(job.completed);
+                        assert.isNull(job.locked_until);
+                        assert.equal(false, job.lock);
+                        job3 = job;
+
+                        callback();
+                    }
+                );
+            },
+            // Get all jobs
+            (callback) => {
+                controller.getJobs(
+                    null,
+                    new FilterParams(),
+                    new PagingParams(),
+                    (err, page) => {
+                        assert.isNull(err);
+
+                        assert.isObject(page);
+                        assert.lengthOf(page.data, 3);
+                        callback();
+                    }
+                )
+            },
+            // Test start job by id
+            (callback) => {
+                controller.startJobByType(
+                    null,
+                    job1.type,
+                    1000 * 60 * 10,
+                    (err, job) => {
+                        assert.isNull(err);
+                        assert.isObject(job);
+                        assert.equal(true, job.lock);
+                        assert.isNotNull(job.locked_until);
+                        assert.isNotNull(job.started);
+                        job1 = job;
+                        callback(err);
+                    }
+                );
+            },
+            // Test compleate job
+            (callback) => {
+                controller.compleateJob(
+                    null,
+                    job1,
+                    (err, job) => {
+                        assert.isNull(err);
+                        assert.isObject(job);
+                        assert.equal(false, job.lock);
+                        assert.isNotNull(job.completed);
+                        job1 = job;
+                        callback(err);
+                    }
+                );
+            },
+            // Test clean jobs
+            (callback) => {
+                controller.cleanJobs(null, (err) => {
+                    callback(err);
+                });
+            },
+            // Get all jobs after clean
+            (callback) => {
+                controller.getJobs(
+                    null,
+                    new FilterParams(),
+                    new PagingParams(),
+                    (err, page) => {
+                        assert.isNull(err);
+                        assert.isObject(page);
+                        assert.lengthOf(page.data, 2);
+                        callback();
+                    }
+                )
+            },
         ], done);
     });
 });

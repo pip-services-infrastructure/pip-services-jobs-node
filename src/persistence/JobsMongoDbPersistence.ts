@@ -95,7 +95,13 @@ export class JobsMongoDbPersistence
         if (try_counter_min != null)
             criteria.push({ try_counter: { $gt: try_counter_min } });
 
-        return criteria.length > 0 ? { $and: criteria } : null;
+        let filterCriteria = filter.getAsNullableString('criteria');
+        if (filterCriteria != null && filterCriteria == 'or') {
+            return criteria.length > 0 ? { $or: criteria } : null;
+        } else {
+            return criteria.length > 0 ? { $and: criteria } : null;
+        }
+
     }
 
     private composeFilterStartJob(filter: FilterParams): any {

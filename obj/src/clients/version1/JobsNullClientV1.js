@@ -17,6 +17,10 @@ class JobsNullClientV1 {
     startJob(correlationId, job, callback) {
         callback(null, null);
     }
+    // Start fist free job by type
+    startJobByType(correlationId, jobType, timeout, callback) {
+        callback(null, null);
+    }
     // Extend job execution limit on timeout value
     extendJob(correlationId, job, callback) {
         callback(null, null);

@@ -11,7 +11,7 @@ const pip_services3_commons_node_4 = require("pip-services3-commons-node");
 const pip_services3_components_node_1 = require("pip-services3-components-node");
 class JobsController {
     constructor() {
-        this.cleanInterval = 1000 * 60;
+        this.cleanInterval = 1000 * 60 * 5;
         this.startJobMaxRetries = 10;
         this._logger = new pip_services3_components_node_1.CompositeLogger();
         this.isOpenFlag = false;
@@ -27,8 +27,10 @@ class JobsController {
         this._fixeRateTimer.setCallback(() => {
             this.cleanJobs(correlationId);
         });
-        this._fixeRateTimer.setInterval(this.cleanInterval);
-        this._fixeRateTimer.start();
+        if (this.cleanInterval > 0) {
+            this._fixeRateTimer.setInterval(this.cleanInterval);
+            this._fixeRateTimer.start();
+        }
         this.isOpenFlag = true;
         this._logger.trace(correlationId, "Jobs controller is opened");
         if (callback)
@@ -38,7 +40,9 @@ class JobsController {
         return this.isOpenFlag;
     }
     close(correlationId, callback) {
-        this._fixeRateTimer.stop();
+        if (this._fixeRateTimer.isStarted) {
+            this._fixeRateTimer.stop();
+        }
         this.isOpenFlag = false;
         this._logger.trace(correlationId, "Jobs controller is closed");
         if (callback)
@@ -80,7 +84,7 @@ class JobsController {
     // Start job
     startJob(correlationId, job, callback) {
         let curentDt = new Date();
-        if (job.try_counter > 0 &&
+        if (job.try_counter < this.startJobMaxRetries &&
             (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
             job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
@@ -113,7 +117,8 @@ class JobsController {
     // Abort job
     abortJob(correlationId, job, callback) {
         job.lock = false;
-        job.locked_until = null;
+        //job.locked_until = null;
+        // stay locked time, next start can be after locked_until expired
         job.started = null;
         this._persistence.update(correlationId, job, callback);
     }
@@ -135,27 +140,14 @@ class JobsController {
     deleteJobs(correlationId, callback) {
         this._persistence.deleteByFilter(correlationId, new pip_services3_commons_node_1.FilterParams, callback);
     }
-    // Clean compleated and expiration jobs
+    // Clean completed and expiration jobs
     cleanJobs(correlationId, callback) {
+        let curentDt = new Date();
         this._logger.trace(correlationId, "Jobs controller clean procedure start.");
-        //delete all job with 0 try counter
-        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('try_counter', 0);
-        this._persistence.deleteByFilter(correlationId, filter, (err) => {
-            if (err != null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");
-                callback(err);
-            }
-        });
+        //delete all job with  try counter >= startJobMaxRetries
         //delete all job with expired execution_time
-        filter = pip_services3_commons_node_1.FilterParams.fromTuples('execution_time_max', new Date());
-        this._persistence.deleteByFilter(correlationId, filter, (err) => {
-            if (err != null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");
-                callback(err);
-            }
-        });
         //delete all job with expired execution_time
-        filter = pip_services3_commons_node_1.FilterParams.fromTuples('compleated_max', new Date());
+        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('criteria', 'or', 'try_counter_min', this.startJobMaxRetries, 'execute_until_max', curentDt, 'completed_max', curentDt);
         this._persistence.deleteByFilter(correlationId, filter, (err) => {
             if (err != null) {
                 this._logger.error(correlationId, err, "Jobs controller clean error:");

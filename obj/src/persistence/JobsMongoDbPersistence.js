@@ -74,7 +74,13 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         let try_counter_min = filter.getAsNullableInteger('try_counter_min');
         if (try_counter_min != null)
             criteria.push({ try_counter: { $gt: try_counter_min } });
-        return criteria.length > 0 ? { $and: criteria } : null;
+        let filterCriteria = filter.getAsNullableString('criteria');
+        if (filterCriteria != null && filterCriteria == 'or') {
+            return criteria.length > 0 ? { $or: criteria } : null;
+        }
+        else {
+            return criteria.length > 0 ? { $and: criteria } : null;
+        }
     }
     composeFilterStartJob(filter) {
         filter = filter || new pip_services3_commons_node_1.FilterParams();

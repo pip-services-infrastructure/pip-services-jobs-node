@@ -26,11 +26,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -49,11 +48,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -73,11 +71,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     return;
                 }
                 for (let job of page.data) {
-                    job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                    job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                    job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                    job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                    job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                     job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                    job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                    job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                     job.created = DateTimeConverter.toDateTime(job.created);
                 }
                 callback(err, page);
@@ -97,16 +94,40 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
         );
     }
+
+    // Start fist free job by type
+    public startJobByType(correlationId: string, jobType: string, timeout: number,
+        callback: (err: any, job: JobV1) => void): void {
+        this.callCommand(
+            'start_job_by_type',
+            correlationId,
+            {
+                type: jobType,
+                timeout: timeout
+            }, (err, job) => {
+                if (job == null) {
+                    callback(err, job);
+                    return;
+                }
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
+                job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
+                job.created = DateTimeConverter.toDateTime(job.created);
+                callback(err, job);
+            }
+        );
+    }
+
     // Extend job execution limit on timeout value
     public extendJob(correlationId: string, job: JobV1,
         callback: (err: any, job: JobV1) => void): void {
@@ -120,11 +141,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -143,11 +163,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -166,11 +185,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -188,11 +206,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -210,11 +227,10 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
                     callback(err, job);
                     return;
                 }
-                job.completed = _.isUndefined(job.completed) ? undefined : DateTimeConverter.toDateTime(job.completed);
-                job.timeout = DateTimeConverter.toDateTime(job.timeout);
-                job.started = _.isUndefined(job.started) ? undefined : DateTimeConverter.toDateTime(job.started);
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = _.isUndefined(job.locked_until) ? undefined : DateTimeConverter.toDateTime(job.locked_until);
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 callback(err, job);
             }
@@ -229,14 +245,5 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
             callback
         );
     }
-    // Clean compleated and expiration jobs
-    // public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
-    // this.callCommand(
-    //     'clean_jobs',
-    //     correlationId,
-    //     null,
-    //     callback
-    // );
-    // }
 
 }

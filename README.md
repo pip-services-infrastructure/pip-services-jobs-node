@@ -26,32 +26,27 @@ please, refer to documentation of the specific protocol.
 ```typescript
 
 export class NewJobV1 {
-    id: string;
     type: string;
     ref_id: string;
     params: any;
-    timeout: Date;
-    retries: number;
-    ttl: Date;
+    ttl: number; // time to live job in ms
 }
 
 export class JobV1 {
-
     // Job description
     id: string;
     type: string;
     ref_id: string;
     params: any;
-    timeout: Date;
-
+    timeout: number;
     // Job control
     created: Date;
-    started?: Date;
-    locked_until?: Date;
+    started: Date;
+    locked_until: Date;
     execute_until: Date;
-    completed?: Date;
+    completed: Date;
     lock: boolean;
-    try_counter: number;  
+    try_counter: number; 
 }
 
 export interface IJobsClientV1 {
@@ -63,6 +58,8 @@ export interface IJobsClientV1 {
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
     // Start job
     startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    // Start fist free job by type
+    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Extend job execution limit on timeout value
     extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Abort job
@@ -75,9 +72,8 @@ export interface IJobsClientV1 {
     deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Remove all jobs
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
-
+      
 }
-
 ```
 
 ## Download
@@ -108,6 +104,7 @@ Example of microservice configuration
 - descriptor: "pip-services-jobs:controller:default:default:1.0"
   options:
     clean_interval: 60000
+    max_retries: 10
 
 - descriptor: "pip-services-jobs:service:http:default:1.0"
   connection:
@@ -331,7 +328,22 @@ Delete all job:
 
 ## Control functions
 
-Start job:
+Start first free job by type:
+```typescript
+
+    let timeout = 1000*60*2; // Timeout for working job in ms
+    client.startJobByType("123", JOB1.type, timeout, (err, job) => {
+        if (err != null) {
+            bconsole.error('Can\'t start jo!');
+            console.error(err);
+        } else {
+            console.dir('Job was started successfull!');
+            // returned job you can use in other control methods
+        }
+    });
+```
+
+Start job (use this method, if you aborting job and want restart this):
 ```typescript
 
     client.startJob("123", JOB1, (err, job) => {
@@ -378,7 +390,7 @@ Compleate running job:
             console.error('Can\'t compleate job!');
             console.error(err);
         } else {
-            console.dir('Job was compleated successfull');
+            console.dir('Job was completed successfull');
         
 ```
 ## Acknowledgements
