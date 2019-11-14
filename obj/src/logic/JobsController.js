@@ -84,13 +84,13 @@ class JobsController {
     // Start job
     startJob(correlationId, job, callback) {
         let curentDt = new Date();
-        if (job.try_counter < this.startJobMaxRetries &&
+        if (job.retries < this.startJobMaxRetries &&
             (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
             job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
             job.started = curentDt;
             job.locked_until = new Date(job.started.valueOf() + job.timeout);
-            job.try_counter = job.try_counter + 1;
+            job.retries = job.retries + 1;
             this._persistence.update(correlationId, job, callback);
         }
         else {
@@ -110,8 +110,10 @@ class JobsController {
     }
     // Extend job execution limit on timeout value
     extendJob(correlationId, job, callback) {
-        job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
         job.locked_until = new Date(job.locked_until.valueOf() + job.timeout.valueOf());
+        if (job.execute_until) {
+            job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
+        }
         this._persistence.update(correlationId, job, callback);
     }
     // Abort job
@@ -147,7 +149,7 @@ class JobsController {
         //delete all job with  try counter >= startJobMaxRetries
         //delete all job with expired execution_time
         //delete all job with expired execution_time
-        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('criteria', 'or', 'try_counter_min', this.startJobMaxRetries, 'execute_until_max', curentDt, 'completed_max', curentDt);
+        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('criteria', 'or', 'retries_min', this.startJobMaxRetries, 'execute_until_max', curentDt, 'completed_max', curentDt);
         this._persistence.deleteByFilter(correlationId, filter, (err) => {
             if (err != null) {
                 this._logger.error(correlationId, err, "Jobs controller clean error:");

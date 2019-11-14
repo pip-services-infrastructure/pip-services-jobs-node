@@ -9,7 +9,6 @@ import { IConfigurable } from 'pip-services3-commons-node';
 import { Descriptor } from 'pip-services3-commons-node';
 import { IReferences } from 'pip-services3-commons-node';
 import { IReferenceable } from 'pip-services3-commons-node';
-import { IdGenerator } from 'pip-services3-commons-node';
 import { CommandSet } from 'pip-services3-commons-node';
 import { ICommandable } from 'pip-services3-commons-node';
 
@@ -113,13 +112,13 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     // Start job
     public startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
         let curentDt = new Date();
-        if (job.try_counter < this.startJobMaxRetries &&
+        if (job.retries < this.startJobMaxRetries &&
             (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
             job.execute_until.valueOf() > curentDt.valueOf()) {
             job.lock = true;
             job.started = curentDt;
             job.locked_until = new Date(job.started.valueOf() + job.timeout);
-            job.try_counter = job.try_counter + 1;
+            job.retries = job.retries + 1;
             this._persistence.update(correlationId, job, callback);
         } else {
             callback(null, null);
@@ -145,8 +144,10 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
 
     // Extend job execution limit on timeout value
     public extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
-        job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
         job.locked_until = new Date(job.locked_until.valueOf() + job.timeout.valueOf());
+        if (job.execute_until) { 
+            job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
+        }
         this._persistence.update(correlationId, job, callback);
     }
     // Abort job
@@ -186,10 +187,9 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
         //delete all job with expired execution_time
         let filter = FilterParams.fromTuples(
             'criteria', 'or',
-            'try_counter_min', this.startJobMaxRetries,
+            'retries_min', this.startJobMaxRetries,
             'execute_until_max', curentDt,
             'completed_max', curentDt
-
         );
         this._persistence.deleteByFilter(correlationId, filter, (err) => {
             if (err != null) {

@@ -110,7 +110,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(0, job.timeout);
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -138,7 +138,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(0, job.timeout);
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -165,7 +165,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
                         assert.equal(0, job.timeout);
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -191,7 +191,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(job1.timeout, job.timeout);
-                        assert.equal(job1.try_counter, job.try_counter);
+                        assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -302,7 +302,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(0, job.timeout);
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -330,7 +330,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(0, job.timeout);
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -357,7 +357,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
                         assert.equal(0, job.timeout.valueOf());
-                        assert.equal(0, job.try_counter);
+                        assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);
@@ -383,7 +383,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
                         assert.equal(job1.timeout, job.timeout);
-                        assert.equal(job1.try_counter, job.try_counter);
+                        assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
                         assert.isNotNull(job.execute_until);

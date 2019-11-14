@@ -88,12 +88,12 @@ export class JobsMongoDbPersistence
         if (lock != null)
             criteria.push({ lock: lock });
 
-        let try_counter = filter.getAsNullableInteger('try_counter');
-        if (try_counter != null)
-            criteria.push({ try_counter: try_counter });
-        let try_counter_min = filter.getAsNullableInteger('try_counter_min');
-        if (try_counter_min != null)
-            criteria.push({ try_counter: { $gt: try_counter_min } });
+        let retries = filter.getAsNullableInteger('retries');
+        if (retries != null)
+            criteria.push({ retries: retries });
+        let retries_min = filter.getAsNullableInteger('retries_min');
+        if (retries_min != null)
+            criteria.push({ retries: { $gt: retries_min } });
 
         let filterCriteria = filter.getAsNullableString('criteria');
         if (filterCriteria != null && filterCriteria == 'or') {
@@ -119,7 +119,7 @@ export class JobsMongoDbPersistence
 
         let max_retries = filter.getAsNullableInteger('max_retries');
         if (max_retries != null)
-            andCriteria.push({ try_counter: { $lt: max_retries } });
+            andCriteria.push({ retries: { $lt: max_retries } });
 
         let curent_dt = filter.getAsNullableDateTime('curent_dt');
         if (curent_dt != null) {
@@ -147,7 +147,7 @@ export class JobsMongoDbPersistence
                 locked_until: newItem.locked_until,
                 lock: newItem.lock,
             },
-            $inc: { try_counter: 1 }
+            $inc: { retries: 1 }
         };
 
         let options = {

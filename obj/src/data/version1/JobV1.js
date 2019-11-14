@@ -5,7 +5,7 @@ class JobV1 {
         let curentDt = new Date();
         this.lock = false;
         this.created = curentDt;
-        this.try_counter = 0;
+        this.retries = 0;
         this.timeout = 0;
         this.completed = null;
         this.started = null;
@@ -15,7 +15,9 @@ class JobV1 {
             this.type = newJob.type;
             this.ref_id = newJob.ref_id;
             this.params = newJob.params;
-            this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+            if (newJob.ttl != null && newJob.ttl > 0) {
+                this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+            }
         }
     }
 }

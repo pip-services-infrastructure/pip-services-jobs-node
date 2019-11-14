@@ -42,11 +42,11 @@ export class JobV1 {
     // Job control
     created: Date;
     started: Date;
-    locked_until: Date;
-    execute_until: Date;
+    locked_until?: Date;
+    execute_until?: Date;
     completed: Date;
     lock: boolean;
-    try_counter: number; 
+    retries: number; 
 }
 
 export interface IJobsClientV1 {

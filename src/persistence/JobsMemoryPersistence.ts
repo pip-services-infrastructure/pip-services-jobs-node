@@ -47,8 +47,8 @@ export class JobsMemoryPersistence
         let completed_max = filter.getAsNullableDateTime('completed_max');
 
         let lock = filter.getAsNullableBoolean('lock');
-        let try_counter = filter.getAsNullableInteger('try_counter');
-        let try_counter_min = filter.getAsNullableInteger('try_counter_min');
+        let retries = filter.getAsNullableInteger('retries');
+        let retries_min = filter.getAsNullableInteger('retries_min');
 
         let filterCriteria = filter.getAsNullableString('criteria');
 
@@ -92,9 +92,9 @@ export class JobsMemoryPersistence
                     return true;
                 if (lock != null && item.lock == lock)
                     return true;
-                if (try_counter != null && item.try_counter == try_counter)
+                if (retries != null && item.retries == retries)
                     return true;
-                if (try_counter_min != null && item.try_counter >= try_counter_min)
+                if (retries_min != null && item.retries >= retries_min)
                     return true;
                 return false;
             };
@@ -138,9 +138,9 @@ export class JobsMemoryPersistence
                     return false;
                 if (lock != null && item.lock != lock)
                     return false;
-                if (try_counter != null && item.try_counter != try_counter)
+                if (retries != null && item.retries != retries)
                     return false;
-                if (try_counter_min != null && item.try_counter <= try_counter_min)
+                if (retries_min != null && item.retries <= retries_min)
                     return false;
                 return true;
             };
@@ -160,7 +160,7 @@ export class JobsMemoryPersistence
                 return false;
             if (lock != null && item.lock != lock)
                 return false;
-            if (max_retries != null && item.try_counter > max_retries)
+            if (max_retries != null && item.retries > max_retries)
                 return false;
             if (curent_dt != null) {
                 if (item.locked_until != null && item.locked_until.valueOf() >= curent_dt.valueOf())
@@ -186,7 +186,7 @@ export class JobsMemoryPersistence
                 job.started = item.started;
                 job.locked_until = new Date(job.started.getUTCMilliseconds() + job.timeout);
                 job.lock = item.lock;
-                job.try_counter = job.try_counter + 1;
+                job.retries = job.retries + 1;
                 this.update(correlationId, job, callback);
             } else {
                 callback(err, null);

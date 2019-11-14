@@ -7,10 +7,10 @@ export declare class JobV1 {
     timeout: number;
     created: Date;
     started: Date;
-    locked_until: Date;
-    execute_until: Date;
+    locked_until?: Date;
+    execute_until?: Date;
     completed: Date;
     lock: boolean;
-    try_counter: number;
+    retries: number;
     constructor(newJob?: NewJobV1);
 }

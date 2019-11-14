@@ -12,18 +12,18 @@ export class JobV1 {
     // Job control
     created: Date;
     started: Date;
-    locked_until: Date;
-    execute_until: Date;
+    locked_until?: Date;
+    execute_until?: Date;
     completed: Date;
     lock: boolean;
-    try_counter: number;
+    retries: number;
 
     constructor(newJob?: NewJobV1);
     constructor(newJob: NewJobV1) {
         let curentDt = new Date();
         this.lock = false;
         this.created = curentDt;
-        this.try_counter = 0;
+        this.retries = 0;
         this.timeout = 0;
 
         this.completed = null;
@@ -35,7 +35,9 @@ export class JobV1 {
             this.type = newJob.type;
             this.ref_id = newJob.ref_id;
             this.params = newJob.params;
-            this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+            if (newJob.ttl != null && newJob.ttl > 0) {
+                this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+            }
         }
     }
 }

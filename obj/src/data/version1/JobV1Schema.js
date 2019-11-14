@@ -13,10 +13,10 @@ class JobV1Schema extends pip_services3_commons_node_1.ObjectSchema {
         this.withRequiredProperty('created', null);
         this.withOptionalProperty('started', null);
         this.withOptionalProperty('locked_until', null);
-        this.withRequiredProperty('execute_until', null);
+        this.withOptionalProperty('execute_until', null);
         this.withOptionalProperty('completed', null);
         this.withRequiredProperty('lock', pip_services3_commons_node_2.TypeCode.Boolean);
-        this.withRequiredProperty('try_counter', pip_services3_commons_node_2.TypeCode.Integer);
+        this.withRequiredProperty('retries', pip_services3_commons_node_2.TypeCode.Integer);
     }
 }
 exports.JobV1Schema = JobV1Schema;

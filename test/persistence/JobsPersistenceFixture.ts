@@ -23,7 +23,7 @@ const JOB1: JobV1 = {
     execute_until: new Date(curentDate.valueOf() + 1000*60*5),
     completed: null,
     lock: false,
-    try_counter: 5
+    retries: 5
 };
 const JOB2: JobV1 = {
     id: "Job_t1_1fsd",
@@ -37,7 +37,7 @@ const JOB2: JobV1 = {
     execute_until: new Date(curentDate.valueOf() + 1000*60*10),
     completed: null,
     lock: true,
-    try_counter: 3
+    retries: 3
 };
 const JOB3: JobV1 = {
     id: "Job_t2_3fsd",
@@ -51,7 +51,7 @@ const JOB3: JobV1 = {
     execute_until: new Date(curentDate.valueOf() + 1000*60*15),
     completed: null,
     lock: false,
-    try_counter: 2
+    retries: 2
 };
 
 export class JobsPersistenceFixture {
@@ -81,7 +81,7 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB1.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB1.locked_until.valueOf(), job.locked_until.valueOf());
                         assert.equal(JOB1.lock, job.lock);
-                        assert.equal(JOB1.try_counter, job.try_counter);
+                        assert.equal(JOB1.retries, job.retries);
 
                         callback();
                     }
@@ -104,7 +104,7 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB2.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB2.locked_until.valueOf(), job.locked_until.valueOf());
                         assert.equal(JOB2.lock, job.lock);
-                        assert.equal(JOB2.try_counter, job.try_counter);
+                        assert.equal(JOB2.retries, job.retries);
 
                         callback();
                     }
@@ -127,7 +127,7 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB3.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB3.locked_until.valueOf(), job.locked_until.valueOf());
                         assert.equal(JOB3.lock, job.lock);
-                        assert.equal(JOB3.try_counter, job.try_counter);
+                        assert.equal(JOB3.retries, job.retries);
 
                         callback();
                     }
@@ -163,7 +163,7 @@ export class JobsPersistenceFixture {
             },
             // Update the job
             (callback) => {
-                job1.try_counter = 4;
+                job1.retries = 4;
 
                 this._persistence.update(
                     null,
@@ -173,7 +173,7 @@ export class JobsPersistenceFixture {
 
                         assert.isObject(job);
                         assert.equal(job1.id, job.id);
-                        assert.equal(4, job.try_counter);
+                        assert.equal(4, job.retries);
 
                         callback();
                     }
@@ -197,7 +197,7 @@ export class JobsPersistenceFixture {
                         assert.equal(job1.started.valueOf(), job.started.valueOf());
                         assert.equal(job1.locked_until.valueOf(), job.locked_until.valueOf());
                         assert.equal(job1.lock, job.lock);
-                        assert.equal(job1.try_counter, job.try_counter);
+                        assert.equal(job1.retries, job.retries);
 
                         callback();
                     }
@@ -322,12 +322,12 @@ export class JobsPersistenceFixture {
                     }
                 )
             },
-            // Filter by try_counter
+            // Filter by retries
             (callback) => {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'try_counter', '2'
+                        'retries', '2'
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -340,12 +340,12 @@ export class JobsPersistenceFixture {
                 )
             },
 
-            // Filter by try_counter_max
+            // Filter by retries_max
             (callback) => {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'try_counter_min', '0'
+                        'retries_min', '0'
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -426,7 +426,7 @@ export class JobsPersistenceFixture {
                     assert.isNull(err);
                     assert.isObject(job);
                     assert.equal(true, job.lock);
-                    assert.equal(JOB3.try_counter + 1, job.try_counter);
+                    assert.equal(JOB3.retries + 1, job.retries);
                     assert.equal(curentDt.getUTCMilliseconds(), job.started.getUTCMilliseconds());
                     let newLockUntil = new Date (curentDt.valueOf() + job.timeout);
                     assert.equal(newLockUntil.getUTCMilliseconds(), job.locked_until.getUTCMilliseconds());
