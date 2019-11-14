@@ -84,10 +84,6 @@ export class JobsMongoDbPersistence
         if (completed != null)
             criteria.push({ completed: { $lt: completed_max } });
 
-        let lock = filter.getAsNullableBoolean('lock');
-        if (lock != null)
-            criteria.push({ lock: lock });
-
         let retries = filter.getAsNullableInteger('retries');
         if (retries != null)
             criteria.push({ retries: retries });
@@ -112,10 +108,6 @@ export class JobsMongoDbPersistence
         let type = filter.getAsNullableString('type');
         if (type != null)
             andCriteria.push({ type: type });
-
-        let lock = filter.getAsNullableBoolean('lock');
-        if (lock != null)
-            andCriteria.push({ lock: lock });
 
         let max_retries = filter.getAsNullableInteger('max_retries');
         if (max_retries != null)
@@ -145,7 +137,6 @@ export class JobsMongoDbPersistence
                 timeout: newItem.timeout,
                 started: newItem.started,
                 locked_until: newItem.locked_until,
-                lock: newItem.lock,
             },
             $inc: { retries: 1 }
         };

@@ -23,7 +23,7 @@ export class JobsNullClientV1 implements IJobsClientV1 {
         callback(null, null);
     }
     // Start job
-    public startJob(correlationId: string, job: JobV1,
+    public startJob(correlationId: string, job: JobV1, timeout:number,
         callback: (err: any, job: JobV1) => void): void {
         callback(null, null);
     }
@@ -35,7 +35,7 @@ export class JobsNullClientV1 implements IJobsClientV1 {
     }
 
     // Extend job execution limit on timeout value
-    public extendJob(correlationId: string, job: JobV1,
+    public extendJob(correlationId: string, job: JobV1, timeout:number,
         callback: (err: any, job: JobV1) => void): void {
         callback(null, null);
     }

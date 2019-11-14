@@ -82,14 +82,13 @@ class JobsController {
         this._persistence.getPageByFilter(correlationId, filter, paging, callback);
     }
     // Start job
-    startJob(correlationId, job, callback) {
+    startJob(correlationId, job, timeout, callback) {
         let curentDt = new Date();
         if (job.retries < this.startJobMaxRetries &&
             (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
             job.execute_until.valueOf() > curentDt.valueOf()) {
-            job.lock = true;
             job.started = curentDt;
-            job.locked_until = new Date(job.started.valueOf() + job.timeout);
+            job.locked_until = new Date(job.started.valueOf() + timeout);
             job.retries = job.retries + 1;
             this._persistence.update(correlationId, job, callback);
         }
@@ -100,25 +99,22 @@ class JobsController {
     // Start job by type
     startJobByType(correlationId, jobType, timeout, callback) {
         let curentDt = new Date();
-        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('type', jobType, 'lock', false, 'curent_dt', curentDt, 'max_tries', this.startJobMaxRetries);
+        let filter = pip_services3_commons_node_1.FilterParams.fromTuples('type', jobType, 'curent_dt', curentDt, 'max_tries', this.startJobMaxRetries);
         let job = new JobV1_1.JobV1();
-        job.lock = true;
         job.started = curentDt;
-        job.timeout = timeout;
         job.locked_until = new Date(curentDt.valueOf() + timeout);
         this._persistence.updateJobForStart(correlationId, filter, job, callback);
     }
     // Extend job execution limit on timeout value
-    extendJob(correlationId, job, callback) {
-        job.locked_until = new Date(job.locked_until.valueOf() + job.timeout.valueOf());
+    extendJob(correlationId, job, timeout, callback) {
+        job.locked_until = new Date(job.locked_until.valueOf() + timeout.valueOf());
         if (job.execute_until) {
-            job.execute_until = new Date(job.execute_until.valueOf() + job.timeout.valueOf());
+            job.execute_until = new Date(job.execute_until.valueOf() + timeout.valueOf());
         }
         this._persistence.update(correlationId, job, callback);
     }
     // Abort job
     abortJob(correlationId, job, callback) {
-        job.lock = false;
         //job.locked_until = null;
         // stay locked time, next start can be after locked_until expired
         job.started = null;
@@ -126,7 +122,6 @@ class JobsController {
     }
     // Compleate job
     compleateJob(correlationId, job, callback) {
-        job.lock = false;
         job.completed = new Date();
         this._persistence.update(correlationId, job, callback);
     }

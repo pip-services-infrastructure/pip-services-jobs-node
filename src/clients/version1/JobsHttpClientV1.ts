@@ -82,13 +82,14 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
         );
     }
     // Start job
-    public startJob(correlationId: string, job: JobV1,
+    public startJob(correlationId: string, job: JobV1, timeout: number,
         callback: (err: any, job: JobV1) => void): void {
         this.callCommand(
             'start_job',
             correlationId,
             {
-                job: job
+                job: job,
+                timeout: timeout
             }, (err, job) => {
                 if (job == null) {
                     callback(err, job);
@@ -129,13 +130,14 @@ export class JobsHttpClientV1 extends CommandableHttpClient implements IJobsClie
     }
 
     // Extend job execution limit on timeout value
-    public extendJob(correlationId: string, job: JobV1,
+    public extendJob(correlationId: string, job: JobV1, timeout: number,
         callback: (err: any, job: JobV1) => void): void {
         this.callCommand(
             'extend_job',
             correlationId,
             {
-                job: job
+                job: job,
+                timeout: timeout
             }, (err, job) => {
                 if (job == null) {
                     callback(err, job);

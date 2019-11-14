@@ -38,14 +38,12 @@ export class JobV1 {
     type: string;
     ref_id: string;
     params: any;
-    timeout: number;
     // Job control
     created: Date;
     started: Date;
     locked_until?: Date;
     execute_until?: Date;
     completed: Date;
-    lock: boolean;
     retries: number; 
 }
 
@@ -57,11 +55,11 @@ export interface IJobsClientV1 {
     // Get list of all jobs
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
     // Start job
-    startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    startJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
     // Start fist free job by type
     startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Extend job execution limit on timeout value
-    extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    extendJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
     // Abort job
     abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Compleate job
@@ -72,7 +70,6 @@ export interface IJobsClientV1 {
     deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Remove all jobs
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
-      
 }
 ```
 
@@ -186,13 +183,10 @@ Add job:
 ```typescript 
 
 const JOB1: NewJobV1 = {
-    id: "Job1_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*30), // 30 min
-    ttl:new Date(1000*60*60*3), // 3 hour
-    retries: 5
+    ttl:1000*60*60*3, // 3 hour
 }; 
 
     client.addJob("123", JOB1, (err, job) => {
@@ -209,23 +203,17 @@ Add uniq job:
 ```typescript 
 
 const JOB1: NewJobV1 = {
-    id: "Job1_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*30), // 30 min
-    ttl:new Date(1000*60*60*3), // 3 hour
-    retries: 5
+    ttl:1000*60*60*3, // 3 hour
 }; 
 
 const JOB2: NewJobV1 = {
-    id: "Job2_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: new Date(1000*60*15), // 15 min
-    ttl: new Date(1000*60*60), // 1 hour
-    retries: 3
+    ttl: 1000*60*60 // 1 hour
 };
     client.addUniqJob("123", JOB1, (err, job) => {
         if (err != null) {
@@ -345,8 +333,8 @@ Start first free job by type:
 
 Start job (use this method, if you aborting job and want restart this):
 ```typescript
-
-    client.startJob("123", JOB1, (err, job) => {
+    let timeout = 1000*60*2; // Timeout for working job in ms
+    client.startJob("123", JOB1, timeout,  (err, job) => {
         if (err != null) {
             bconsole.error('Can\'t start jo!');
             console.error(err);
@@ -358,8 +346,8 @@ Start job (use this method, if you aborting job and want restart this):
 
 Extend work time existing job:
 ```typescript
-
-    client.extendJob("123", JOB1, (err, job) => {
+    let timeout = 1000*60*2; // Timeout for extend working time for job in ms
+    client.extendJob("123", JOB1, timeout,  (err, job) => {
         if (err != null) {
             console.error('Can\'t extend job!');
             console.error(err);

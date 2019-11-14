@@ -10,11 +10,11 @@ export interface IJobsClientV1 {
     // Get list of all jobs
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
     // Start job
-    startJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    startJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
     // Start fist free job by type
     startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Extend job execution limit on timeout value
-    extendJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    extendJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
     // Abort job
     abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Compleate job

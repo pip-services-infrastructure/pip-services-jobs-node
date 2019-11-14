@@ -58,14 +58,16 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
     }
     makeStartJob() {
         return new pip_services3_commons_node_2.Command('start_job', new pip_services3_commons_node_3.ObjectSchema(false)
-            .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
+            .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema())
+            .withRequiredProperty('timeout', pip_services3_commons_node_6.TypeCode.Integer), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
             job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
             job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
             job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
-            this._controller.startJob(correlationId, job, callback);
+            let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
+            this._controller.startJob(correlationId, job, timeout, callback);
         });
     }
     // Start fist free job by type
@@ -74,21 +76,22 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
             .withRequiredProperty('type', pip_services3_commons_node_6.TypeCode.String)
             .withRequiredProperty('timeout', pip_services3_commons_node_6.TypeCode.Integer), (correlationId, args, callback) => {
             let type = args.getAsString('type');
-            let timeout = args.getAsInteger('timeout');
-            ;
+            let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
             this._controller.startJobByType(correlationId, type, timeout, callback);
         });
     }
     makeExtendJob() {
         return new pip_services3_commons_node_2.Command('extend_job', new pip_services3_commons_node_3.ObjectSchema(false)
-            .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema()), (correlationId, args, callback) => {
+            .withRequiredProperty('job', new JobV1Schema_1.JobV1Schema())
+            .withRequiredProperty('timeout', pip_services3_commons_node_6.TypeCode.Integer), (correlationId, args, callback) => {
             let job = args.getAsObject('job');
             job.completed = job.completed ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.completed) : null;
             job.started = job.started ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.started) : null;
             job.execute_until = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.execute_until);
             job.locked_until = job.locked_until ? pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.locked_until) : null;
             job.created = pip_services3_commons_node_1.DateTimeConverter.toDateTime(job.created);
-            this._controller.extendJob(correlationId, job, callback);
+            let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
+            this._controller.extendJob(correlationId, job, timeout, callback);
         });
     }
     makeAbortJob() {

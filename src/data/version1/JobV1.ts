@@ -7,7 +7,6 @@ export class JobV1 {
     type: string;
     ref_id: string;
     params: any;
-    timeout: number;
 
     // Job control
     created: Date;
@@ -15,17 +14,14 @@ export class JobV1 {
     locked_until?: Date;
     execute_until?: Date;
     completed: Date;
-    lock: boolean;
     retries: number;
 
     constructor(newJob?: NewJobV1);
     constructor(newJob: NewJobV1) {
         let curentDt = new Date();
-        this.lock = false;
         this.created = curentDt;
         this.retries = 0;
-        this.timeout = 0;
-
+        
         this.completed = null;
         this.started = null;
         this.locked_until = null;

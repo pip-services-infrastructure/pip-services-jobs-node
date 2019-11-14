@@ -61,7 +61,6 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -69,7 +68,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         job1 = job;
 
                         callback();
@@ -88,7 +87,7 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -96,7 +95,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -114,7 +113,7 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -122,7 +121,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -139,7 +138,6 @@ export class JobsClientV1Fixture {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -147,7 +145,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         callback();
                     }
                 )
@@ -244,7 +242,7 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -252,7 +250,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         job1 = job;
 
                         callback();
@@ -271,7 +269,7 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -279,7 +277,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -297,7 +295,6 @@ export class JobsClientV1Fixture {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout.valueOf());
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -305,7 +302,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -322,7 +319,6 @@ export class JobsClientV1Fixture {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -330,7 +326,7 @@ export class JobsClientV1Fixture {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         callback();
                     }
                 )
@@ -348,7 +344,7 @@ export class JobsClientV1Fixture {
                         assert.lengthOf(page.data, 2);
 
                         job1 = page.data[0];
-                        job2 = page.data[0];
+                        job2 = page.data[1];
                         callback();
                     }
                 )
@@ -362,7 +358,6 @@ export class JobsClientV1Fixture {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job1 = job;
@@ -372,14 +367,15 @@ export class JobsClientV1Fixture {
             },
             // Test extend job
             (callback) => {
-                let newExeUntil = new Date(job1.execute_until.valueOf() + job1.timeout.valueOf());
+                let timeout = 1000*60*2;
+                let newExeUntil = new Date(job1.execute_until.valueOf() + timeout);
                 this._client.extendJob(
                     null,
-                    job1,
+                    job1, 
+                    timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
 
                         assert.equal(newExeUntil.getUTCMilliseconds(), job.execute_until.getUTCMilliseconds());
                         job1 = job;
@@ -395,7 +391,7 @@ export class JobsClientV1Fixture {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
+
                         assert.isNotNull(job.completed || null);
                         job1 = job;
                         callback(err);
@@ -404,14 +400,13 @@ export class JobsClientV1Fixture {
             },
             // Test start job
             (callback) => {
-                job2.timeout = 1000 * 60; // set timeout 1 min
+                let timeout = 1000 * 60; // set timeout 1 min
                 this._client.startJob(
                     null,
-                    job2,
+                    job2, timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job2 = job;
@@ -427,7 +422,7 @@ export class JobsClientV1Fixture {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
+
                         assert.isNotNull(job.locked_until);
                         assert.isNull(job.started);
                         callback(err);

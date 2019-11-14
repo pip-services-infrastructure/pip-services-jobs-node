@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class JobV1 {
     constructor(newJob) {
         let curentDt = new Date();
-        this.lock = false;
         this.created = curentDt;
         this.retries = 0;
-        this.timeout = 0;
         this.completed = null;
         this.started = null;
         this.locked_until = null;

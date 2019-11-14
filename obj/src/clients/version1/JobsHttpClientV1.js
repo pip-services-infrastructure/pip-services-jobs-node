@@ -59,9 +59,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
         });
     }
     // Start job
-    startJob(correlationId, job, callback) {
+    startJob(correlationId, job, timeout, callback) {
         this.callCommand('start_job', correlationId, {
-            job: job
+            job: job,
+            timeout: timeout
         }, (err, job) => {
             if (job == null) {
                 callback(err, job);
@@ -94,9 +95,10 @@ class JobsHttpClientV1 extends pip_services3_rpc_node_1.CommandableHttpClient {
         });
     }
     // Extend job execution limit on timeout value
-    extendJob(correlationId, job, callback) {
+    extendJob(correlationId, job, timeout, callback) {
         this.callCommand('extend_job', correlationId, {
-            job: job
+            job: job,
+            timeout: timeout
         }, (err, job) => {
             if (job == null) {
                 callback(err, job);

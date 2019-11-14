@@ -42,10 +42,10 @@ export class JobsDirectClientV1 extends DirectClient<IJobsController> implements
         });
     }
     // Start job
-    public startJob(correlationId: string, job: JobV1,
+    public startJob(correlationId: string, job: JobV1, timeout:number,
         callback: (err: any, job: JobV1) => void): void {
         let timing = this.instrument(correlationId, 'jobs.start_job');
-        this._controller.startJob(correlationId, job, (err, item) => {
+        this._controller.startJob(correlationId, job, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
         });
@@ -53,7 +53,7 @@ export class JobsDirectClientV1 extends DirectClient<IJobsController> implements
     // Start fist free job by type
     public startJobByType(correlationId: string, jobType: string, timeout: number,
         callback: (err: any, job: JobV1) => void): void {
-        let timing = this.instrument(correlationId, 'jobs.start_job');
+        let timing = this.instrument(correlationId, 'jobs.start_job_by_type');
         this._controller.startJobByType(correlationId, jobType, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
@@ -61,10 +61,10 @@ export class JobsDirectClientV1 extends DirectClient<IJobsController> implements
     }
 
     // Extend job execution limit on timeout value
-    public extendJob(correlationId: string, job: JobV1,
+    public extendJob(correlationId: string, job: JobV1, timeout:number,
         callback: (err: any, job: JobV1) => void): void {
         let timing = this.instrument(correlationId, 'jobs.extend_job');
-        this._controller.startJob(correlationId, job, (err, item) => {
+        this._controller.extendJob(correlationId, job, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
         });

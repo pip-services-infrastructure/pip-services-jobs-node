@@ -9,13 +9,11 @@ class JobV1Schema extends pip_services3_commons_node_1.ObjectSchema {
         this.withRequiredProperty('type', pip_services3_commons_node_2.TypeCode.String);
         this.withRequiredProperty('ref_id', pip_services3_commons_node_2.TypeCode.String);
         this.withOptionalProperty('params', null);
-        this.withRequiredProperty('timeout', pip_services3_commons_node_2.TypeCode.Integer);
         this.withRequiredProperty('created', null);
         this.withOptionalProperty('started', null);
         this.withOptionalProperty('locked_until', null);
         this.withOptionalProperty('execute_until', null);
         this.withOptionalProperty('completed', null);
-        this.withRequiredProperty('lock', pip_services3_commons_node_2.TypeCode.Boolean);
         this.withRequiredProperty('retries', pip_services3_commons_node_2.TypeCode.Integer);
     }
 }

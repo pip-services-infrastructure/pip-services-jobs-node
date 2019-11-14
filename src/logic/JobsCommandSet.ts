@@ -90,16 +90,17 @@ export class JobsCommandSet extends CommandSet {
         return new Command(
             'start_job',
             new ObjectSchema(false)
-                .withRequiredProperty('job', new JobV1Schema()),
+                .withRequiredProperty('job', new JobV1Schema())
+                .withRequiredProperty('timeout', TypeCode.Integer),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
                 let job: JobV1 = args.getAsObject('job');
-                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed): null;
-                job.started = job.started ? DateTimeConverter.toDateTime(job.started): null;
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = job.locked_until ?  DateTimeConverter.toDateTime(job.locked_until): null;
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
-
-                this._controller.startJob(correlationId, job, callback);
+                let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
+                this._controller.startJob(correlationId, job, timeout, callback);
             }
         );
     }
@@ -112,7 +113,7 @@ export class JobsCommandSet extends CommandSet {
                 .withRequiredProperty('timeout', TypeCode.Integer),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
                 let type = args.getAsString('type');
-                let timeout = args.getAsInteger('timeout');;
+                let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
                 this._controller.startJobByType(correlationId, type, timeout, callback);
             }
         );
@@ -122,15 +123,17 @@ export class JobsCommandSet extends CommandSet {
         return new Command(
             'extend_job',
             new ObjectSchema(false)
-                .withRequiredProperty('job', new JobV1Schema()),
+                .withRequiredProperty('job', new JobV1Schema())
+                .withRequiredProperty('timeout', TypeCode.Integer),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
                 let job: JobV1 = args.getAsObject('job');
-                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed): null;
-                job.started = job.started ? DateTimeConverter.toDateTime(job.started): null;
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = job.locked_until ?  DateTimeConverter.toDateTime(job.locked_until): null;
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
-                this._controller.extendJob(correlationId, job, callback);
+                let timeout = args.getAsIntegerWithDefault('timeout', 1000 * 60);
+                this._controller.extendJob(correlationId, job, timeout, callback);
             }
         );
     }
@@ -142,10 +145,10 @@ export class JobsCommandSet extends CommandSet {
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
                 let job: JobV1 = args.getAsObject('job');
-                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed): null;
-                job.started = job.started ? DateTimeConverter.toDateTime(job.started): null;
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = job.locked_until ?  DateTimeConverter.toDateTime(job.locked_until): null;
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 this._controller.abortJob(correlationId, job, callback);
             }
@@ -159,10 +162,10 @@ export class JobsCommandSet extends CommandSet {
                 .withRequiredProperty('job', new JobV1Schema()),
             (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
                 let job: JobV1 = args.getAsObject('job');
-                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed): null;
-                job.started = job.started ? DateTimeConverter.toDateTime(job.started): null;
+                job.completed = job.completed ? DateTimeConverter.toDateTime(job.completed) : null;
+                job.started = job.started ? DateTimeConverter.toDateTime(job.started) : null;
                 job.execute_until = DateTimeConverter.toDateTime(job.execute_until);
-                job.locked_until = job.locked_until ?  DateTimeConverter.toDateTime(job.locked_until): null;
+                job.locked_until = job.locked_until ? DateTimeConverter.toDateTime(job.locked_until) : null;
                 job.created = DateTimeConverter.toDateTime(job.created);
                 this._controller.compleateJob(correlationId, job, callback);
             }

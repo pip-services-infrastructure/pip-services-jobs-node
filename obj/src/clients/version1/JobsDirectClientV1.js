@@ -32,25 +32,25 @@ class JobsDirectClientV1 extends pip_services3_rpc_node_1.DirectClient {
         });
     }
     // Start job
-    startJob(correlationId, job, callback) {
+    startJob(correlationId, job, timeout, callback) {
         let timing = this.instrument(correlationId, 'jobs.start_job');
-        this._controller.startJob(correlationId, job, (err, item) => {
+        this._controller.startJob(correlationId, job, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
         });
     }
     // Start fist free job by type
     startJobByType(correlationId, jobType, timeout, callback) {
-        let timing = this.instrument(correlationId, 'jobs.start_job');
+        let timing = this.instrument(correlationId, 'jobs.start_job_by_type');
         this._controller.startJobByType(correlationId, jobType, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
         });
     }
     // Extend job execution limit on timeout value
-    extendJob(correlationId, job, callback) {
+    extendJob(correlationId, job, timeout, callback) {
         let timing = this.instrument(correlationId, 'jobs.extend_job');
-        this._controller.startJob(correlationId, job, (err, item) => {
+        this._controller.extendJob(correlationId, job, timeout, (err, item) => {
             timing.endTiming();
             callback(err, item);
         });

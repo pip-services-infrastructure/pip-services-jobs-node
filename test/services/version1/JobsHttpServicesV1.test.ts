@@ -16,31 +16,22 @@ import { JobsHttpServiceV1 } from '../../../src/services/version1/JobsHttpServic
 import { NewJobV1 } from '../../../src/data/version1/NewJobV1';
 
 const JOB1: NewJobV1 = {
-    //id: "Job1_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    //timeout: 1000*60*30, // 30 min
     ttl: 1000 * 60 * 60 * 3, // 3 hour
-    //retries: 5
 };
 const JOB2: NewJobV1 = {
-    //id: "Job2_t1_0fsd",
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    //timeout: new Date(1000*60*15), // 15 min
     ttl: 1000 * 60 * 60, // 1 hour
-    //retries: 3
 };
 const JOB3: NewJobV1 = {
-    //id: "Job3_t2_3fsd",
     type: "t2",
     ref_id: "obj_3fsd",
     params: null,
-    //timeout: new Date(1000*60*10), // 10 minutes
     ttl: 1000 * 60 * 30, // 30 minutes
-    //retries: 2
 };
 
 suite('JobsHttpServiceV1', () => {
@@ -109,7 +100,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -117,7 +107,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         job1 = job;
 
                         callback();
@@ -137,7 +127,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -145,7 +134,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -164,7 +153,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -172,7 +160,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -190,7 +178,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -198,7 +185,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         callback();
                     }
                 )
@@ -301,7 +288,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -309,7 +295,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         job1 = job;
 
                         callback();
@@ -329,7 +315,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -337,7 +322,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -356,7 +341,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout.valueOf());
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -364,7 +348,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
 
                         callback();
                     }
@@ -382,7 +366,6 @@ suite('JobsHttpServiceV1', () => {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -390,7 +373,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+
                         callback();
                     }
                 )
@@ -424,7 +407,7 @@ suite('JobsHttpServiceV1', () => {
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
+
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job1 = job;
@@ -434,15 +417,17 @@ suite('JobsHttpServiceV1', () => {
             },
             // Test extend job
             (callback) => {
-                let newExeUntil = new Date(DateTimeConverter.toDateTime(job1.execute_until).getUTCMilliseconds() + DateTimeConverter.toDateTime(job1.timeout).getUTCMilliseconds());
+                let newExeUntil = new Date(DateTimeConverter.toDateTime(job1.execute_until).getUTCMilliseconds() 
+                                    + 1000 * 60 * 10);
                 rest.post('/v1/jobs/extend_job',
                     {
-                        job: job1
+                        job: job1,
+                        timeout: 1000 * 60 * 10
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
+
                         assert.equal(newExeUntil.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.execute_until).getUTCMilliseconds());
                         job1 = job;
                         callback(err);
@@ -458,7 +443,7 @@ suite('JobsHttpServiceV1', () => {
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
+
                         assert.isNotNull(job.completed);
                         job1 = job;
                         callback(err);
@@ -467,15 +452,16 @@ suite('JobsHttpServiceV1', () => {
             },
             // Test start
             (callback) => {
-                job2.timeout = 1000 * 60; // set timeout 1 min
+
                 rest.post('/v1/jobs/start_job',
                     {
-                        job: job2
+                        job: job2,
+                        timeout: 1000 * 60  // set timeout 1 min
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
+
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job2 = job;
@@ -493,7 +479,7 @@ suite('JobsHttpServiceV1', () => {
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
+
                         assert.isNotNull(job.locked_until);
                         assert.isNull(job.started);
                         callback(err);

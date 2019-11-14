@@ -16,13 +16,11 @@ const JOB1: JobV1 = {
     type: "t1",
     ref_id: "obj_0fsd",
     params: null,
-    timeout: 1000 * 60 * 30,
     created: new Date("2019-11-07T17:30:00"),
     started: new Date("2019-11-07T17:30:20"),
     locked_until: new Date("2019-11-07T18:00:20"),
     execute_until: new Date(curentDate.valueOf() + 1000*60*5),
     completed: null,
-    lock: false,
     retries: 5
 };
 const JOB2: JobV1 = {
@@ -30,13 +28,11 @@ const JOB2: JobV1 = {
     type: "t1",
     ref_id: "obj_1fsd",
     params: null,
-    timeout: 1000 * 60 * 15,
     created: new Date("2019-11-07T17:35:00"),
     started: new Date("2019-11-07T17:35:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
     execute_until: new Date(curentDate.valueOf() + 1000*60*10),
     completed: null,
-    lock: true,
     retries: 3
 };
 const JOB3: JobV1 = {
@@ -44,13 +40,11 @@ const JOB3: JobV1 = {
     type: "t2",
     ref_id: "obj_3fsd",
     params: null,
-    timeout: 1000 * 60 * 10,
     created: new Date("2019-11-07T17:40:00"),
     started: new Date("2019-11-07T17:40:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
     execute_until: new Date(curentDate.valueOf() + 1000*60*15),
     completed: null,
-    lock: false,
     retries: 2
 };
 
@@ -76,11 +70,9 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(JOB1.timeout.valueOf(), job.timeout.valueOf());
                         assert.equal(JOB1.created.valueOf(), job.created.valueOf());
                         assert.equal(JOB1.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB1.locked_until.valueOf(), job.locked_until.valueOf());
-                        assert.equal(JOB1.lock, job.lock);
                         assert.equal(JOB1.retries, job.retries);
 
                         callback();
@@ -99,11 +91,9 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB2.id, job.id);
                         assert.equal(JOB2.type, job.type);
                         assert.equal(JOB2.ref_id, job.ref_id);
-                        assert.equal(JOB2.timeout.valueOf(), job.timeout.valueOf());
                         assert.equal(JOB2.created.valueOf(), job.created.valueOf());
                         assert.equal(JOB2.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB2.locked_until.valueOf(), job.locked_until.valueOf());
-                        assert.equal(JOB2.lock, job.lock);
                         assert.equal(JOB2.retries, job.retries);
 
                         callback();
@@ -122,11 +112,9 @@ export class JobsPersistenceFixture {
                         assert.equal(JOB3.id, job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(JOB3.timeout.valueOf(), job.timeout.valueOf());
                         assert.equal(JOB3.created.valueOf(), job.created.valueOf());
                         assert.equal(JOB3.started.valueOf(), job.started.valueOf());
                         assert.equal(JOB3.locked_until.valueOf(), job.locked_until.valueOf());
-                        assert.equal(JOB3.lock, job.lock);
                         assert.equal(JOB3.retries, job.retries);
 
                         callback();
@@ -192,11 +180,9 @@ export class JobsPersistenceFixture {
 
                         assert.equal(job1.type, job.type);
                         assert.equal(job1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout.valueOf(), job.timeout.valueOf());
                         assert.equal(job1.created.valueOf(), job.created.valueOf());
                         assert.equal(job1.started.valueOf(), job.started.valueOf());
                         assert.equal(job1.locked_until.valueOf(), job.locked_until.valueOf());
-                        assert.equal(job1.lock, job.lock);
                         assert.equal(job1.retries, job.retries);
 
                         callback();
@@ -305,23 +291,6 @@ export class JobsPersistenceFixture {
                     }
                 )
             },
-            // Filter by lock
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    FilterParams.fromTuples(
-                        'lock', 'false'
-                    ),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
-
-                        assert.lengthOf(page.data, 2);
-
-                        callback();
-                    }
-                )
-            },
             // Filter by retries
             (callback) => {
                 this._persistence.getPageByFilter(
@@ -412,24 +381,19 @@ export class JobsPersistenceFixture {
             (callback) => {
                 let tmpJob = new JobV1();
                 let curentDt = new Date();
-                tmpJob.lock = true;
                 tmpJob.started = curentDt;
-                tmpJob.timeout = JOB3.timeout;
-                tmpJob.locked_until = new Date(curentDt.valueOf() + JOB3.timeout);
+                tmpJob.locked_until = new Date(curentDt.valueOf() + 1000*60*2);
 
                 this._persistence.updateJobForStart(null, FilterParams.fromTuples(
                     'type', 't2',
-                    'lock', false,
                     'max_retries', '6',
                     'curent_dt', curentDt
                 ), tmpJob, (err, job) => {
                     assert.isNull(err);
                     assert.isObject(job);
-                    assert.equal(true, job.lock);
                     assert.equal(JOB3.retries + 1, job.retries);
                     assert.equal(curentDt.getUTCMilliseconds(), job.started.getUTCMilliseconds());
-                    let newLockUntil = new Date (curentDt.valueOf() + job.timeout);
-                    assert.equal(newLockUntil.getUTCMilliseconds(), job.locked_until.getUTCMilliseconds());
+                    assert.equal(tmpJob.locked_until.getUTCMilliseconds(), job.locked_until.getUTCMilliseconds());
                     callback();
                 })
             }

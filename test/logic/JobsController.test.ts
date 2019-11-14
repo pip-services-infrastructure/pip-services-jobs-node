@@ -82,7 +82,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -90,7 +90,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         job1 = job;
                         callback();
                     }
@@ -108,7 +107,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -116,7 +115,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
 
                         callback();
                     }
@@ -134,7 +132,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -142,7 +140,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
 
                         callback();
                     }
@@ -159,7 +156,6 @@ suite('JobsController', () => {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -167,7 +163,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         callback();
                     }
                 )
@@ -265,7 +260,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -273,7 +268,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         job1 = job;
                         callback();
                     }
@@ -291,7 +285,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -299,7 +293,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
 
                         callback();
                     }
@@ -317,7 +310,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout.valueOf());
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -325,8 +318,7 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
-
+                        
                         callback();
                     }
                 );
@@ -342,7 +334,6 @@ suite('JobsController', () => {
                         assert.equal(job1.id, job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(job1.timeout, job.timeout);
                         assert.equal(job1.retries, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -350,7 +341,7 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
+                        
                         callback();
                     }
                 )
@@ -382,7 +373,6 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job1 = job;
@@ -392,15 +382,15 @@ suite('JobsController', () => {
             },
             // Test extend job
             (callback) => {
-                let newExeUntil = new Date(job1.execute_until.valueOf() + job1.timeout);
+                let timeout = 1000*60*5;
+                let newExeUntil = new Date(job1.execute_until.valueOf() + timeout);
                 controller.extendJob(
                     null,
-                    job1,
+                    job1, timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
-
+                        
                         assert.equal(newExeUntil.getUTCMilliseconds(), job.execute_until.getUTCMilliseconds());
                         job1 = job;
                         callback(err);
@@ -415,7 +405,6 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
                         assert.isNotNull(job.completed);
                         job1 = job;
                         callback(err);
@@ -424,14 +413,13 @@ suite('JobsController', () => {
             },
             // Test start job
             (callback) => {
-                job2.timeout = 1000 * 60; // set timeout 1 min
+                let timeout = 1000 * 60; // set timeout 1 min
                 controller.startJob(
                     null,
-                    job2,
+                    job2, timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job2 = job;
@@ -447,7 +435,6 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNull(job.started);
                         callback(err);
@@ -476,7 +463,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB1.type, job.type);
                         assert.equal(JOB1.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB1.params, job.params);
                         assert.isNotNull(job.created);
@@ -484,7 +471,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         job1 = job;
                         callback();
                     }
@@ -502,7 +488,7 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB2.type, job.type);
                         assert.equal(JOB2.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout);
+                        
                         assert.equal(0, job.retries);
                         assert.equal(JOB2.params, job.params);
                         assert.isNotNull(job.created);
@@ -510,7 +496,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         job2 = job;
                         callback();
                     }
@@ -528,7 +513,6 @@ suite('JobsController', () => {
                         assert.isNotNull(job.id);
                         assert.equal(JOB3.type, job.type);
                         assert.equal(JOB3.ref_id, job.ref_id);
-                        assert.equal(0, job.timeout.valueOf());
                         assert.equal(0, job.retries);
                         assert.equal(JOB3.params, job.params);
                         assert.isNotNull(job.created);
@@ -536,7 +520,6 @@ suite('JobsController', () => {
                         assert.isNull(job.started);
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
-                        assert.equal(false, job.lock);
                         job3 = job;
 
                         callback();
@@ -567,7 +550,6 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(true, job.lock);
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job1 = job;
@@ -583,7 +565,6 @@ suite('JobsController', () => {
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
-                        assert.equal(false, job.lock);
                         assert.isNotNull(job.completed);
                         job1 = job;
                         callback(err);

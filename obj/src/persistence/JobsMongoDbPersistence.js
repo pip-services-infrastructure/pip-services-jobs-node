@@ -65,9 +65,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         let completed_max = filter.getAsNullableDateTime('completed_max');
         if (completed != null)
             criteria.push({ completed: { $lt: completed_max } });
-        let lock = filter.getAsNullableBoolean('lock');
-        if (lock != null)
-            criteria.push({ lock: lock });
         let retries = filter.getAsNullableInteger('retries');
         if (retries != null)
             criteria.push({ retries: retries });
@@ -88,9 +85,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         let type = filter.getAsNullableString('type');
         if (type != null)
             andCriteria.push({ type: type });
-        let lock = filter.getAsNullableBoolean('lock');
-        if (lock != null)
-            andCriteria.push({ lock: lock });
         let max_retries = filter.getAsNullableInteger('max_retries');
         if (max_retries != null)
             andCriteria.push({ retries: { $lt: max_retries } });
@@ -115,7 +109,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
                 timeout: newItem.timeout,
                 started: newItem.started,
                 locked_until: newItem.locked_until,
-                lock: newItem.lock,
             },
             $inc: { retries: 1 }
         };

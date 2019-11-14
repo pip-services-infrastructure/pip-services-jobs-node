@@ -29,7 +29,6 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
         let completed = filter.getAsNullableDateTime('completed');
         let completed_min = filter.getAsNullableDateTime('completed_min');
         let completed_max = filter.getAsNullableDateTime('completed_max');
-        let lock = filter.getAsNullableBoolean('lock');
         let retries = filter.getAsNullableInteger('retries');
         let retries_min = filter.getAsNullableInteger('retries_min');
         let filterCriteria = filter.getAsNullableString('criteria');
@@ -70,8 +69,6 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
                 if (completed_min != null && item.completed && item.completed.valueOf() >= completed_min.valueOf())
                     return true;
                 if (completed_max != null && item.completed && item.completed.valueOf() <= completed_max.valueOf())
-                    return true;
-                if (lock != null && item.lock == lock)
                     return true;
                 if (retries != null && item.retries == retries)
                     return true;
@@ -118,8 +115,6 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
                     return false;
                 if (completed_max != null && item.completed && item.completed.valueOf() >= completed_max.valueOf())
                     return false;
-                if (lock != null && item.lock != lock)
-                    return false;
                 if (retries != null && item.retries != retries)
                     return false;
                 if (retries_min != null && item.retries <= retries_min)
@@ -131,13 +126,10 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
     composeFilterStartJob(filter) {
         filter = filter || new pip_services3_commons_node_1.FilterParams();
         let type = filter.getAsNullableString('type');
-        let lock = filter.getAsNullableBoolean('lock');
         let max_retries = filter.getAsNullableInteger('max_retries');
         let curent_dt = filter.getAsNullableDateTime('curent_dt');
         return (item) => {
             if (type != null && item.type != type)
-                return false;
-            if (lock != null && item.lock != lock)
                 return false;
             if (max_retries != null && item.retries > max_retries)
                 return false;
@@ -160,8 +152,7 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
             if (page.data.length > 0) {
                 let job = page.data[0];
                 job.started = item.started;
-                job.locked_until = new Date(job.started.getUTCMilliseconds() + job.timeout);
-                job.lock = item.lock;
+                job.locked_until = item.locked_until;
                 job.retries = job.retries + 1;
                 this.update(correlationId, job, callback);
             }
