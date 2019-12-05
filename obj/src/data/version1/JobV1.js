@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class JobV1 {
     constructor(newJob) {
-        let curentDt = new Date();
-        this.created = curentDt;
+        let now = new Date();
+        this.created = now;
         this.retries = 0;
         this.completed = null;
         this.started = null;
@@ -14,7 +14,7 @@ class JobV1 {
             this.ref_id = newJob.ref_id;
             this.params = newJob.params;
             if (newJob.ttl != null && newJob.ttl > 0) {
-                this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+                this.execute_until = new Date(now.getTime() + newJob.ttl);
             }
         }
     }

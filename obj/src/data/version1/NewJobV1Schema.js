@@ -7,8 +7,8 @@ class NewJobV1Schema extends pip_services3_commons_node_1.ObjectSchema {
         super();
         this.withRequiredProperty('type', pip_services3_commons_node_2.TypeCode.String);
         this.withRequiredProperty('ref_id', pip_services3_commons_node_2.TypeCode.String);
-        this.withOptionalProperty('params', null);
         this.withRequiredProperty('ttl', pip_services3_commons_node_2.TypeCode.Integer);
+        this.withOptionalProperty('params', null);
     }
 }
 exports.NewJobV1Schema = NewJobV1Schema;

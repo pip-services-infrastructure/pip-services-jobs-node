@@ -7,7 +7,7 @@ export declare class JobsCommandSet extends CommandSet {
     private makeAddUniqJob;
     private makeGetJobs;
     private makeGetJobById;
-    private makeStartJob;
+    private makeStartJobById;
     private makeStartJobByType;
     private makeExtendJob;
     private makeAbortJob;

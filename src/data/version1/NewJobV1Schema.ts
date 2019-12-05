@@ -6,7 +6,7 @@ export class NewJobV1Schema extends ObjectSchema {
         super();
         this.withRequiredProperty('type', TypeCode.String);
         this.withRequiredProperty('ref_id', TypeCode.String);
-        this.withOptionalProperty('params', null);
         this.withRequiredProperty('ttl', TypeCode.Integer);
+        this.withOptionalProperty('params', null);
     }
 }

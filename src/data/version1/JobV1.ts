@@ -1,7 +1,6 @@
 import { NewJobV1 } from "./NewJobV1";
 
 export class JobV1 {
-
     // Job description
     id: string;
     type: string;
@@ -16,10 +15,9 @@ export class JobV1 {
     completed: Date;
     retries: number;
 
-    constructor(newJob?: NewJobV1);
-    constructor(newJob: NewJobV1) {
-        let curentDt = new Date();
-        this.created = curentDt;
+    constructor(newJob?: NewJobV1) {
+        let now = new Date();
+        this.created = now;
         this.retries = 0;
         
         this.completed = null;
@@ -32,7 +30,7 @@ export class JobV1 {
             this.ref_id = newJob.ref_id;
             this.params = newJob.params;
             if (newJob.ttl != null && newJob.ttl > 0) {
-                this.execute_until = new Date(curentDt.valueOf() + newJob.ttl);
+                this.execute_until = new Date(now.getTime() + newJob.ttl);
             }
         }
     }

@@ -27,162 +27,126 @@ export class JobsMemoryPersistence
         let ref_id = filter.getAsNullableString('ref_id');
 
         let created = filter.getAsNullableDateTime('created');
-        let created_min = filter.getAsNullableDateTime('created_min');
-        let created_max = filter.getAsNullableDateTime('created_max');
+        let created_from = filter.getAsNullableDateTime('created_from');
+        let created_to = filter.getAsNullableDateTime('created_to');
 
         let started = filter.getAsNullableDateTime('started');
-        let started_min = filter.getAsNullableDateTime('started_min');
-        let started_max = filter.getAsNullableDateTime('started_max');
+        let started_from = filter.getAsNullableDateTime('started_from');
+        let started_to = filter.getAsNullableDateTime('started_to');
 
         let locked_until = filter.getAsNullableDateTime('locked_until');
-        let locked_until_min = filter.getAsNullableDateTime('locked_until_min');
-        let locked_until_max = filter.getAsNullableDateTime('locked_until_max');
+        let locked_from = filter.getAsNullableDateTime('locked_from');
+        let locked_to = filter.getAsNullableDateTime('locked_to');
 
         let execute_until = filter.getAsNullableDateTime('execute_until');
-        let execute_until_min = filter.getAsNullableDateTime('execute_until_min');
-        let execute_until_max = filter.getAsNullableDateTime('execute_until_max');
+        let execute_from = filter.getAsNullableDateTime('execute_from');
+        let execute_to = filter.getAsNullableDateTime('execute_to');
 
         let completed = filter.getAsNullableDateTime('completed');
-        let completed_min = filter.getAsNullableDateTime('completed_min');
-        let completed_max = filter.getAsNullableDateTime('completed_max');
+        let completed_from = filter.getAsNullableDateTime('completed_from');
+        let completed_to = filter.getAsNullableDateTime('completed_to');
 
         let retries = filter.getAsNullableInteger('retries');
-        let retries_min = filter.getAsNullableInteger('retries_min');
+        let min_retries = filter.getAsNullableInteger('min_retries');
 
-        let filterCriteria = filter.getAsNullableString('criteria');
-
-        if (filterCriteria != null && filterCriteria == 'or') { // or criteria
-            return (item) => {
-                if (id != null && item.id == id)
-                    return true;
-                if (type != null && item.type == type)
-                    return true;
-                if (ref_id != null && item.ref_id == ref_id)
-                    return true;
-                if (created != null && item.created.valueOf() == created.valueOf())
-                    return true;
-                if (created_min != null && item.created.valueOf() >= created_min.valueOf())
-                    return true;
-                if (created_max != null && item.created.valueOf() <= created_max.valueOf())
-                    return true;
-                if (started != null && item.started && item.started.valueOf() == started.valueOf())
-                    return true;
-                if (started_min != null && item.started && item.started.valueOf() >= started_min.valueOf())
-                    return true;
-                if (started_max != null && item.started && item.started.valueOf() <= started_max.valueOf())
-                    return true;
-                if (locked_until != null && item.locked_until && item.locked_until.valueOf() == locked_until.valueOf())
-                    return true;
-                if (locked_until_min != null && item.locked_until && item.locked_until.valueOf() >= locked_until_min.valueOf())
-                    return true;
-                if (locked_until_max != null && item.locked_until && item.locked_until.valueOf() <= locked_until_max.valueOf())
-                    return true;
-                if (execute_until != null && item.execute_until.valueOf() == execute_until.valueOf())
-                    return true;
-                if (execute_until_min != null && item.execute_until.valueOf() >= execute_until_min.valueOf())
-                    return true;
-                if (execute_until_max != null && item.execute_until.valueOf() <= execute_until_max.valueOf())
-                    return true;
-                if (completed != null && item.completed && item.completed.valueOf() == completed.valueOf())
-                    return true;
-                if (completed_min != null && item.completed && item.completed.valueOf() >= completed_min.valueOf())
-                    return true;
-                if (completed_max != null && item.completed && item.completed.valueOf() <= completed_max.valueOf())
-                    return true;
-                if (retries != null && item.retries == retries)
-                    return true;
-                if (retries_min != null && item.retries >= retries_min)
-                    return true;
+        return (item) => {
+            if (id != null && item.id != id)
                 return false;
-            };
-        } else { // and criteria default
-            return (item) => {
-                if (id != null && item.id != id)
-                    return false;
-                if (type != null && item.type != type)
-                    return false;
-                if (ref_id != null && item.ref_id != ref_id)
-                    return false;
-                if (created != null && item.created.valueOf() != created.valueOf())
-                    return false;
-                if (created_min != null && item.created.valueOf() <= created_min.valueOf())
-                    return false;
-                if (created_max != null && item.created.valueOf() >= created_max.valueOf())
-                    return false;
-                if (started != null && item.started && item.started.valueOf() != started.valueOf())
-                    return false;
-                if (started_min != null && item.started && item.started.valueOf() <= started_min.valueOf())
-                    return false;
-                if (started_max != null && item.started && item.started.valueOf() >= started_max.valueOf())
-                    return false;
-                if (locked_until != null && item.locked_until.valueOf() != locked_until.valueOf())
-                    return false;
-                if (locked_until_min != null && item.locked_until && item.locked_until.valueOf() <= locked_until_min.valueOf())
-                    return false;
-                if (locked_until_max != null && item.locked_until && item.locked_until.valueOf() >= locked_until_max.valueOf())
-                    return false;
-                if (execute_until != null && item.execute_until.valueOf() != execute_until.valueOf())
-                    return false;
-                if (execute_until_min != null && item.execute_until.valueOf() <= execute_until_min.valueOf())
-                    return false;
-                if (execute_until_max != null && item.execute_until.valueOf() >= execute_until_max.valueOf())
-                    return false;
-                if (completed != null && item.completed && item.completed.valueOf() != completed.valueOf())
-                    return false;
-                if (completed_min != null && item.completed && item.completed.valueOf() <= completed_min.valueOf())
-                    return false;
-                if (completed_max != null && item.completed && item.completed.valueOf() >= completed_max.valueOf())
-                    return false;
-                if (retries != null && item.retries != retries)
-                    return false;
-                if (retries_min != null && item.retries <= retries_min)
-                    return false;
-                return true;
-            };
+            if (type != null && item.type != type)
+                return false;
+            if (ref_id != null && item.ref_id != ref_id)
+                return false;
+            if (created != null && item.created.getTime() != created.getTime())
+                return false;
+            if (created_from != null && item.created.getTime() < created_from.getTime())
+                return false;
+            if (created_to != null && item.created.getTime() > created_to.getTime())
+                return false;
+            if (started != null && (item.started == null || item.started.getTime() != started.getTime()))
+                return false;
+            if (started_from != null && (item.started == null || item.started.getTime() < started_from.getTime()))
+                return false;
+            if (started_to != null && (item.started == null || item.started.getTime() > started_to.getTime()))
+                return false;
+            if (locked_until != null && (item.locked_until == null || item.locked_until.getTime() != locked_until.getTime()))
+                return false;
+            if (locked_from != null && (item.locked_until == null || item.locked_until.getTime() < locked_from.getTime()))
+                return false;
+            if (locked_to != null && (item.locked_until == null || item.locked_until.getTime() > locked_to.getTime()))
+                return false;
+            if (execute_until != null && (item.execute_until == null || item.execute_until.getTime() != execute_until.getTime()))
+                return false;
+            if (execute_from != null && (item.execute_until == null || item.execute_until.getTime() < execute_from.getTime()))
+                return false;
+            if (execute_to != null && (item.execute_until == null || item.execute_until.getTime() > execute_to.getTime()))
+                return false;
+            if (completed != null && (item.completed == null || item.completed.getTime() != completed.getTime()))
+                return false;
+            if (completed_from != null && (item.completed == null || item.completed.getTime() < completed_from.getTime()))
+                return false;
+            if (completed_to != null && (item.completed == null || item.completed.getTime() > completed_to.getTime()))
+                return false;
+            if (retries != null && item.retries != retries)
+                return false;
+            if (min_retries != null && item.retries <= min_retries)
+                return false;
+            return true;
         }
     }
 
-    private composeFilterStartJob(filter: FilterParams): any {
-        filter = filter || new FilterParams();
+    public startJobById(correlationId: string, id: string, timeout: number,
+        callback: (err: any, job: JobV1) => void): void {
+        let item = _.find(this._items, item => item.id == id);
 
-        let type = filter.getAsNullableString('type');
-        let max_retries = filter.getAsNullableInteger('max_retries');
-        let curent_dt = filter.getAsNullableDateTime('curent_dt');
+        if (item == null) {
+            this._logger.trace(correlationId, "Item %s was not found", id);
+            if (callback) callback(null, null);
+            return;
+        }
 
-        return (item) => {
-            if (type != null && item.type != type)
-                return false;
-            if (max_retries != null && item.retries > max_retries)
-                return false;
-            if (curent_dt != null) {
-                if (item.locked_until != null && item.locked_until.valueOf() >= curent_dt.valueOf())
-                    return false;
-                if (item.execute_until != null && item.execute_until.valueOf() < curent_dt.valueOf())
-                    return false;
-            }
-            return true;
-        };
+        let now = new Date();
+        if (item.completed == null && (item.locked_until == null || item.locked_until.getTime() <= now.getTime())) {
+            item.started = now;
+            item.locked_until = new Date(now.getTime() + timeout);
+            item.retries++;
+            item.timeout = timeout;
+
+            this._logger.trace(correlationId, "Updated item %s", item.id);
+
+            this.save(correlationId, (err) => {
+                if (callback) callback(err, item)
+            });
+        } else {
+            this._logger.trace(correlationId, "Item %s was completed or locked", id);
+            if (callback) callback(null, null);
+        }    
     }
 
-    // select item by filter and update
-    public updateJobForStart(correlationId: string, filter: FilterParams, item: JobV1,
+    public startJobByType(correlationId: string, type: string, timeout: number, maxRetries: number,
         callback: (err: any, job: JobV1) => void): void {
 
-        super.getPageByFilter(correlationId, this.composeFilterStartJob(filter), new PagingParams, null, null, (err, page) => {
-            if (err != null) {
-                callback(err, null);
-                return;
-            }
-            if (page.data.length > 0) {
-                let job = page.data[0];
-                job.started = item.started;
-                job.locked_until = item.locked_until;
-                job.retries = job.retries + 1;
-                this.update(correlationId, job, callback);
-            } else {
-                callback(err, null);
-            }
-        })
+        let now = new Date();
+        let item = _.find(this._items, (item) => {
+            return item.type == type && item.completed == null && item.retries < maxRetries
+                && (item.locked_until == null || item.locked_until.getTime() <= now);
+        });
+
+        if (item == null) {
+            this._logger.trace(correlationId, "Item with type %s was not found", type);
+            if (callback) callback(null, null);
+            return;
+        }
+
+        item.started = now;
+        item.locked_until = new Date(now.getTime() + timeout);
+        item.retries++;
+        item.timeout = timeout;
+
+        this._logger.trace(correlationId, "Updated item %s", item.id);
+
+        this.save(correlationId, (err) => {
+            if (callback) callback(err, item)
+        });
     }
 
     public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams,

@@ -53,8 +53,8 @@ suite('JobsController', () => {
         controller.configure(new ConfigParams());
 
         let references = References.fromTuples(
-            new Descriptor('jobs', 'persistence', 'memory', 'default', '1.0'), persistence,
-            new Descriptor('jobs', 'controller', 'default', 'default', '1.0'), controller
+            new Descriptor('pip-services-jobs', 'persistence', 'memory', 'default', '1.0'), persistence,
+            new Descriptor('pip-services-jobs', 'controller', 'default', 'default', '1.0'), controller
         );
 
         controller.setReferences(references);
@@ -91,6 +91,7 @@ suite('JobsController', () => {
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
                         job1 = job;
+
                         callback();
                     }
                 );
@@ -186,7 +187,7 @@ suite('JobsController', () => {
             },
             // Delete the job
             (callback) => {
-                controller.deleteJob(
+                controller.deleteJobById(
                     null,
                     job1.id,
                     (err, job) => {
@@ -269,6 +270,7 @@ suite('JobsController', () => {
                         assert.isNull(job.completed);
                         assert.isNull(job.locked_until);
                         job1 = job;
+
                         callback();
                     }
                 );
@@ -386,7 +388,8 @@ suite('JobsController', () => {
                 let newExeUntil = new Date(job1.execute_until.valueOf() + timeout);
                 controller.extendJob(
                     null,
-                    job1, timeout,
+                    job1.id,
+                    timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
@@ -399,9 +402,9 @@ suite('JobsController', () => {
             },
             // Test compleate job
             (callback) => {
-                controller.compleateJob(
+                controller.completeJob(
                     null,
-                    job1,
+                    job1.id,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
@@ -414,9 +417,10 @@ suite('JobsController', () => {
             // Test start job
             (callback) => {
                 let timeout = 1000 * 60; // set timeout 1 min
-                controller.startJob(
+                controller.startJobById(
                     null,
-                    job2, timeout,
+                    job2.id,
+                    timeout,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
@@ -431,7 +435,7 @@ suite('JobsController', () => {
             (callback) => {
                 controller.abortJob(
                     null,
-                    job2,
+                    job2.id,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
@@ -445,7 +449,6 @@ suite('JobsController', () => {
     });
 
     test('Test clean expired jobs', (done) => {
-
         let job1: JobV1;
         let job2: JobV1;
         let job3: JobV1;
@@ -559,9 +562,9 @@ suite('JobsController', () => {
             },
             // Test compleate job
             (callback) => {
-                controller.compleateJob(
+                controller.completeJob(
                     null,
-                    job1,
+                    job1.id,
                     (err, job) => {
                         assert.isNull(err);
                         assert.isObject(job);

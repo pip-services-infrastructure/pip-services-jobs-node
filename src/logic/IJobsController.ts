@@ -1,6 +1,9 @@
+import { FilterParams } from "pip-services3-commons-node";
+import { PagingParams } from "pip-services3-commons-node";
+import { DataPage } from "pip-services3-commons-node";
+
 import { NewJobV1 } from "../data/version1/NewJobV1";
 import { JobV1 } from "../data/version1";
-import { FilterParams, PagingParams, DataPage } from "pip-services3-commons-node";
 
 export interface IJobsController {
     // Add new job
@@ -9,20 +12,20 @@ export interface IJobsController {
     addUniqJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
     // Get list of all jobs
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
+    // Get job by Id
+    getJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Start job
-    startJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
+    startJobById(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Start fist free job by type
     startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Extend job execution limit on timeout value
-    extendJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
+    extendJob(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     // Abort job
-    abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    abortJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Compleate job
-    compleateJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
-    // Get job by Id
-    getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void;
+    completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Delete job by Id
-    deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    deleteJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     // Remove all jobs
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
     // Clean completed and expiration jobs

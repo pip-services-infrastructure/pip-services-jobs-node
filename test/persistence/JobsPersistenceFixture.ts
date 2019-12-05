@@ -7,9 +7,8 @@ import { PagingParams } from 'pip-services3-commons-node';
 
 import { JobV1 } from '../../src/data/version1/JobV1';
 import { IJobsPersistence } from '../../src/persistence/IJobsPersistence';
-import { cursorTo } from 'readline';
 
-let curentDate = new Date();
+let now = new Date();
 
 const JOB1: JobV1 = {
     id: "Job_t1_0fsd",
@@ -19,8 +18,8 @@ const JOB1: JobV1 = {
     created: new Date("2019-11-07T17:30:00"),
     started: new Date("2019-11-07T17:30:20"),
     locked_until: new Date("2019-11-07T18:00:20"),
-    execute_until: new Date(curentDate.valueOf() + 1000*60*5),
-    completed: null,
+    execute_until: new Date(now.getTime() + 1000 * 60 * 5),
+    completed: null,  
     retries: 5
 };
 const JOB2: JobV1 = {
@@ -31,8 +30,8 @@ const JOB2: JobV1 = {
     created: new Date("2019-11-07T17:35:00"),
     started: new Date("2019-11-07T17:35:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
-    execute_until: new Date(curentDate.valueOf() + 1000*60*10),
-    completed: null,
+    execute_until: new Date(now.getTime() + 1000 * 60 * 10),
+    completed: null,  
     retries: 3
 };
 const JOB3: JobV1 = {
@@ -43,7 +42,7 @@ const JOB3: JobV1 = {
     created: new Date("2019-11-07T17:40:00"),
     started: new Date("2019-11-07T17:40:20"),
     locked_until: new Date("2019-11-07T17:50:20"),
-    execute_until: new Date(curentDate.valueOf() + 1000*60*15),
+    execute_until: new Date(now.getTime() + 1000 * 60 * 15),
     completed: null,
     retries: 2
 };
@@ -147,7 +146,7 @@ export class JobsPersistenceFixture {
                         job1 = page.data[0];
                         callback();
                     }
-                )
+                );
             },
             // Update the job
             (callback) => {
@@ -165,7 +164,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Get job by id
             (callback) => {
@@ -187,7 +186,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Delete the job
             (callback) => {
@@ -202,7 +201,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Try to get deleted job
             (callback) => {
@@ -216,7 +215,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Delete all jobs
             (callback) => {
@@ -227,9 +226,8 @@ export class JobsPersistenceFixture {
                         assert.isNull(err);
                         callback();
                     }
-                )
+                );
             },
-
             // Try to get jobs after delete
             (callback) => {
                 this._persistence.getPageByFilter(
@@ -244,12 +242,10 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             }
         ], done);
     }
-
-
 
     public testGetWithFilters(done) {
         async.series([
@@ -272,7 +268,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Filter by type
             (callback) => {
@@ -289,7 +285,7 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Filter by retries
             (callback) => {
@@ -306,15 +302,14 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
-
             // Filter by retries_max
             (callback) => {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'retries_min', '0'
+                        'min_retries', '0'
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -324,9 +319,8 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
-
             // Filter by created
             (callback) => {
                 this._persistence.getPageByFilter(
@@ -342,14 +336,14 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
-            // Filter by locked_until_max
+            // Filter by locked_to
             (callback) => {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'locked_until_max', new Date("2019-11-07T18:10:00")
+                        'locked_to', new Date("2019-11-07T18:10:00")
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -359,13 +353,14 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
-            },// Filter by execute_until_min
+                );
+            },
+            // Filter by execute_from
             (callback) => {
                 this._persistence.getPageByFilter(
                     null,
                     FilterParams.fromTuples(
-                        'execute_until_min', new Date(curentDate.valueOf() + 1000*60*8)
+                        'execute_from', new Date(now.getTime() + 1000 * 60 * 8)
                     ),
                     new PagingParams(),
                     (err, page) => {
@@ -375,27 +370,20 @@ export class JobsPersistenceFixture {
 
                         callback();
                     }
-                )
+                );
             },
             // Test updateJobForStart
             (callback) => {
-                let tmpJob = new JobV1();
-                let curentDt = new Date();
-                tmpJob.started = curentDt;
-                tmpJob.locked_until = new Date(curentDt.valueOf() + 1000*60*2);
-
-                this._persistence.updateJobForStart(null, FilterParams.fromTuples(
-                    'type', 't2',
-                    'max_retries', '6',
-                    'curent_dt', curentDt
-                ), tmpJob, (err, job) => {
-                    assert.isNull(err);
-                    assert.isObject(job);
-                    assert.equal(JOB3.retries + 1, job.retries);
-                    assert.equal(curentDt.getUTCMilliseconds(), job.started.getUTCMilliseconds());
-                    assert.equal(tmpJob.locked_until.getUTCMilliseconds(), job.locked_until.getUTCMilliseconds());
-                    callback();
-                })
+                this._persistence.startJobByType(null, 't2', 1000, 6,
+                    (err, job) => {
+                        assert.isNull(err);
+                        assert.isObject(job);
+                        assert.equal(JOB3.retries + 1, job.retries);
+                        assert.isNotNull(job.started.valueOf());
+                        assert.isNotNull(job.locked_until);
+                        callback();
+                    }
+                );
             }
         ], done);
     }

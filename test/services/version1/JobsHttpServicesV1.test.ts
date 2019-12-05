@@ -58,9 +58,9 @@ suite('JobsHttpServiceV1', () => {
         ));
 
         let references = References.fromTuples(
-            new Descriptor('jobs', 'persistence', 'memory', 'default', '1.0'), persistence,
-            new Descriptor('jobs', 'controller', 'default', 'default', '1.0'), controller,
-            new Descriptor('jobs', 'service', 'http', 'default', '1.0'), service
+            new Descriptor('pip-services-jobs', 'persistence', 'memory', 'default', '1.0'), persistence,
+            new Descriptor('pip-services-jobs', 'controller', 'default', 'default', '1.0'), controller,
+            new Descriptor('pip-services-jobs', 'service', 'http', 'default', '1.0'), service
         );
 
         controller.setReferences(references);
@@ -210,7 +210,7 @@ suite('JobsHttpServiceV1', () => {
             },
             // Delete the job
             (callback) => {
-                rest.post('/v1/jobs/delete_job',
+                rest.post('/v1/jobs/delete_job_by_id',
                     {
                         job_id: job1.id
                     },
@@ -417,18 +417,16 @@ suite('JobsHttpServiceV1', () => {
             },
             // Test extend job
             (callback) => {
-                let newExeUntil = new Date(DateTimeConverter.toDateTime(job1.execute_until).getUTCMilliseconds() 
-                                    + 1000 * 60 * 10);
                 rest.post('/v1/jobs/extend_job',
                     {
-                        job: job1,
+                        job_id: job1.id,
                         timeout: 1000 * 60 * 10
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
                         assert.isObject(job);
 
-                        assert.equal(newExeUntil.getUTCMilliseconds(), DateTimeConverter.toDateTime(job.execute_until).getUTCMilliseconds());
+                        assert.isNotNull(job.locked_until);
                         job1 = job;
                         callback(err);
                     }
@@ -436,9 +434,9 @@ suite('JobsHttpServiceV1', () => {
             },
             // Test compleate job
             (callback) => {
-                rest.post('/v1/jobs/compleate_job',
+                rest.post('/v1/jobs/complete_job',
                     {
-                        job: job1
+                        job_id: job1.id
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
@@ -453,9 +451,9 @@ suite('JobsHttpServiceV1', () => {
             // Test start
             (callback) => {
 
-                rest.post('/v1/jobs/start_job',
+                rest.post('/v1/jobs/start_job_by_id',
                     {
-                        job: job2,
+                        job_id: job2.id,
                         timeout: 1000 * 60  // set timeout 1 min
                     },
                     (err, req, res, job) => {
@@ -465,6 +463,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNotNull(job.locked_until);
                         assert.isNotNull(job.started);
                         job2 = job;
+
                         callback(err);
                     }
                 );
@@ -474,7 +473,7 @@ suite('JobsHttpServiceV1', () => {
                 //controller.abortJob(
                 rest.post('/v1/jobs/abort_job',
                     {
-                        job: job2
+                        job_id: job2.id
                     },
                     (err, req, res, job) => {
                         assert.isNull(err);
@@ -482,6 +481,7 @@ suite('JobsHttpServiceV1', () => {
 
                         assert.isNotNull(job.locked_until);
                         assert.isNull(job.started);
+
                         callback(err);
                     }
                 );

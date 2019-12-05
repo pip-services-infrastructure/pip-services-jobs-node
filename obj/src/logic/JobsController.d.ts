@@ -13,11 +13,11 @@ import { NewJobV1 } from '../data/version1/NewJobV1';
 export declare class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable, IOpenable {
     private _persistence;
     private _commandSet;
-    private isOpenFlag;
-    private _fixeRateTimer;
+    private _opened;
+    private _timer;
     private _config;
-    private cleanInterval;
-    private startJobMaxRetries;
+    private _cleanInterval;
+    private _maxRetries;
     private _logger;
     constructor();
     configure(config: ConfigParams): void;
@@ -29,13 +29,13 @@ export declare class JobsController implements IJobsController, IConfigurable, I
     addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
     addUniqJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
-    startJob(correlationId: string, job: JobV1, timeout: number, callback: (err: any, job: JobV1) => void): void;
-    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
-    extendJob(correlationId: string, job: JobV1, timeout: number, callback: (err: any, job: JobV1) => void): void;
-    abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
-    compleateJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void;
-    deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    startJobById(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
+    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
+    extendJob(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
+    abortJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    deleteJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
     cleanJobs(correlationId: string, callback?: (err: any) => void): void;
 }

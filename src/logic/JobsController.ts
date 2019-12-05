@@ -1,7 +1,7 @@
 let _ = require('lodash');
 let async = require('async');
 
-import { FilterParams, IOpenable } from 'pip-services3-commons-node';
+import { FilterParams, IOpenable, AnyValueMap } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 import { ConfigParams } from 'pip-services3-commons-node';
@@ -23,48 +23,46 @@ import { CompositeLogger } from 'pip-services3-components-node';
 export class JobsController implements IJobsController, IConfigurable, IReferenceable, ICommandable, IOpenable {
     private _persistence: IJobsPersistence;
     private _commandSet: JobsCommandSet;
-    private isOpenFlag: boolean;
-    private _fixeRateTimer: FixedRateTimer;
+    private _opened: boolean = false;
+    private _timer: FixedRateTimer = new FixedRateTimer();
     private _config: ConfigParams;
-    private cleanInterval: number = 1000 * 60 * 5;
-    private startJobMaxRetries = 10;
+    private _cleanInterval: number = 1000 * 60 * 5;
+    private _maxRetries = 10;
     private _logger: CompositeLogger = new CompositeLogger();
 
     public constructor() {
-        this.isOpenFlag = false;
-        this._fixeRateTimer = new FixedRateTimer();
     }
 
     public configure(config: ConfigParams): void {
         this._config = config;
         this._logger.configure(config);
-        this.cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000 * 60);
-        this.startJobMaxRetries = config.getAsLongWithDefault('options.max_retries', 10);
+        this._cleanInterval = config.getAsLongWithDefault('options.clean_interval', 1000 * 60);
+        this._maxRetries = config.getAsLongWithDefault('options.max_retries', 10);
     }
 
     public open(correlationId: string, callback?: (err: any) => void): void {
-        this._fixeRateTimer.setCallback(() => {
+        this._timer.setCallback(() => {
             this.cleanJobs(correlationId);
         });
-        if (this.cleanInterval > 0) {
-            this._fixeRateTimer.setInterval(this.cleanInterval);
-            this._fixeRateTimer.start();
+        if (this._cleanInterval > 0) {
+            this._timer.setInterval(this._cleanInterval);
+            this._timer.start();
         }
-        this.isOpenFlag = true;
+        this._opened = true;
         this._logger.trace(correlationId, "Jobs controller is opened");
         if (callback)
             callback(null);
     }
 
     public isOpen(): boolean {
-        return this.isOpenFlag;
+        return this._opened;
     }
 
     public close(correlationId: string, callback?: (err: any) => void): void {
-        if (this._fixeRateTimer.isStarted) {
-            this._fixeRateTimer.stop();
+        if (this._timer.isStarted) {
+            this._timer.stop();
         }
-        this.isOpenFlag = false;
+        this._opened = false;
         this._logger.trace(correlationId, "Jobs controller is closed");
         if (callback)
             callback(null);
@@ -72,7 +70,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
 
     public setReferences(references: IReferences): void {
         this._persistence = references.getOneRequired<IJobsPersistence>(
-            new Descriptor('jobs', 'persistence', '*', '*', '1.0')
+            new Descriptor('pip-services-jobs', 'persistence', '*', '*', '1.0')
         );
         this._logger.setReferences(references);
     }
@@ -83,11 +81,13 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
         }
         return this._commandSet;
     }
+    
     // Add new job
     public addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void {
         let job = new JobV1(newJob);
         this._persistence.create(correlationId, job, callback);
     }
+
     // Add new job if not exist with same type and ref_id
     public addUniqJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void {
         let filter = FilterParams.fromTuples(
@@ -104,95 +104,109 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
             }
         });
     }
+    
     // Get list of all jobs
     public getJobs(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<JobV1>) => void): void {
         this._persistence.getPageByFilter(correlationId, filter, paging, callback);
     }
-    // Start job
-    public startJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void {
-        let curentDt = new Date();
-        if (job.retries < this.startJobMaxRetries &&
-            (job.locked_until ? job.locked_until.valueOf() : 0) < curentDt.valueOf() &&
-            job.execute_until.valueOf() > curentDt.valueOf()) {
-            job.started = curentDt;
-            job.locked_until = new Date(job.started.valueOf() + timeout);
-            job.retries = job.retries + 1;
-            this._persistence.update(correlationId, job, callback);
-        } else {
-            callback(null, null);
-        }
-    }
 
-    // Start job by type
-    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
-        let curentDt = new Date();
-        let filter = FilterParams.fromTuples(
-            'type', jobType,
-            'curent_dt', curentDt,
-            'max_tries', this.startJobMaxRetries
-        );
-        let job = new JobV1();
-        job.started = curentDt;
-        job.locked_until = new Date(curentDt.valueOf() + timeout);
-        this._persistence.updateJobForStart(correlationId, filter, job, callback);
-    }
-
-    // Extend job execution limit on timeout value
-    public extendJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void {
-        job.locked_until = new Date(job.locked_until.valueOf() +timeout.valueOf());
-        if (job.execute_until) { 
-            job.execute_until = new Date(job.execute_until.valueOf() + timeout.valueOf());
-        }
-        this._persistence.update(correlationId, job, callback);
-    }
-    // Abort job
-    public abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
-        //job.locked_until = null;
-        // stay locked time, next start can be after locked_until expired
-        job.started = null;
-        this._persistence.update(correlationId, job, callback);
-    }
-    // Compleate job
-    public compleateJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void {
-        
-        job.completed = new Date();
-        this._persistence.update(correlationId, job, callback);
-    }
     // Get job by Id
     public getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void {
         this._persistence.getOneById(correlationId, jobId, callback);
     }
+
+    // Start job
+    public startJobById(correlationId: string, jobId: string, timeout:number, callback: (err: any, job: JobV1) => void): void {
+        this._persistence.startJobById(correlationId, jobId, timeout, callback);
+    }
+
+    // Start job by type
+    startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
+        this._persistence.startJobByType(correlationId, jobType, timeout, this._maxRetries, callback);
+    }
+
+    // Extend job execution limit on timeout value
+    public extendJob(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
+        let now = new Date();
+        let update = AnyValueMap.fromTuples(
+            'timeout', timeout,
+            'locked_util', new Date(now.getTime() + timeout)
+        );
+        this._persistence.updatePartially(correlationId, jobId, update, callback);
+    }
+
+    // Abort job
+    public abortJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
+        let update = AnyValueMap.fromTuples(
+            'started', null,
+            'locked_util', null,
+        );
+        this._persistence.updatePartially(correlationId, jobId, update, callback);
+    }
+    
+    // Complete job
+    public completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
+        let update = AnyValueMap.fromTuples(
+            'started', null,
+            'locked_util', null,
+            'completed', new Date()
+        );
+        this._persistence.updatePartially(correlationId, jobId, update, callback);
+    }
+
     // Delete job by Id
-    public deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
+    public deleteJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
         this._persistence.deleteById(correlationId, jobId, callback);
     }
+
     // Remove all jobs
     public deleteJobs(correlationId: string, callback?: (err: any) => void): void {
         this._persistence.deleteByFilter(correlationId, new FilterParams, callback);
     }
+
     // Clean completed and expiration jobs
     public cleanJobs(correlationId: string, callback?: (err: any) => void): void {
+        let now = new Date();
 
-        let curentDt = new Date();
+        this._logger.trace(correlationId, "Starting jobs cleaning...");
 
-        this._logger.trace(correlationId, "Jobs controller clean procedure start.");
-        //delete all job with  try counter >= startJobMaxRetries
-        //delete all job with expired execution_time
-        //delete all job with expired execution_time
-        let filter = FilterParams.fromTuples(
-            'criteria', 'or',
-            'retries_min', this.startJobMaxRetries,
-            'execute_until_max', curentDt,
-            'completed_max', curentDt
-        );
-        this._persistence.deleteByFilter(correlationId, filter, (err) => {
+        async.series([
+            (callback) => {
+                this._persistence.deleteByFilter(
+                    correlationId,
+                    FilterParams.fromTuples(
+                        'min_retries', this._maxRetries
+                    ),
+                    callback
+                );        
+            },
+            (callback) => {
+                this._persistence.deleteByFilter(
+                    correlationId,
+                    FilterParams.fromTuples(
+                        'execute_to', now
+                    ),
+                    callback
+                );        
+            },
+            (callback) => {
+                this._persistence.deleteByFilter(
+                    correlationId,
+                    FilterParams.fromTuples(
+                        'completed_to', now
+                    ),
+                    callback
+                );        
+            },
+        ], (err) => {
             if (err != null) {
-                this._logger.error(correlationId, err, "Jobs controller clean error:");
+                this._logger.error(correlationId, err, "Failed to clean up jobs.");
             }
-            this._logger.trace(correlationId, "Jobs controller clean procedure end.");
+
+            this._logger.trace(correlationId, "Jobs cleaning ended.");
+
             callback(err);
         });
-
     }
 }

@@ -2,7 +2,7 @@
     "name": "pip-services-jobs-node",
     "version": "1.0.0",
     "author": "Conceptual Vision Consulting LLC",
-    "description": "Node.js jobs orchestration microservice",
+    "description": "Jobs orchestration microservice in Node.js",
     "contributors": [
         {
             "name": "Sergey Seroukhov",
@@ -48,10 +48,8 @@
         "@types/chai": "*",
         "@types/mocha": "*",
         "@types/mongodb": "^2.1.38",
-        "@types/mongoose": "^4.7.4",
         "restify": "^4.3.0",
         "chai": "*",
-        "matcha": "*",
         "mocha": "*"
     }
 }

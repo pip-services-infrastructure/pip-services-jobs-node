@@ -18,9 +18,9 @@ class JobsServiceFactory extends pip_services3_components_node_1.Factory {
     }
 }
 exports.JobsServiceFactory = JobsServiceFactory;
-JobsServiceFactory.MemoryPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('jobs', 'persistence', 'memory', '*', '1.0');
-JobsServiceFactory.FilePersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('jobs', 'persistence', 'file', '*', '1.0');
-JobsServiceFactory.MongoDbPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('jobs', 'persistence', 'mongodb', '*', '1.0');
-JobsServiceFactory.ControllerDescriptor = new pip_services3_commons_node_1.Descriptor('jobs', 'controller', 'default', '*', '1.0');
-JobsServiceFactory.HttpServiceV1Descriptor = new pip_services3_commons_node_1.Descriptor('jobs', 'service', 'http', '*', '1.0');
+JobsServiceFactory.MemoryPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('pip-services-jobs', 'persistence', 'memory', '*', '1.0');
+JobsServiceFactory.FilePersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('pip-services-jobs', 'persistence', 'file', '*', '1.0');
+JobsServiceFactory.MongoDbPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor('pip-services-jobs', 'persistence', 'mongodb', '*', '1.0');
+JobsServiceFactory.ControllerDescriptor = new pip_services3_commons_node_1.Descriptor('pip-services-jobs', 'controller', 'default', '*', '1.0');
+JobsServiceFactory.HttpServiceV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-jobs', 'service', 'http', '*', '1.0');
 //# sourceMappingURL=JobsServiceFactory.js.map

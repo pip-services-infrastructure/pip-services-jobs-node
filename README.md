@@ -63,7 +63,7 @@ export interface IJobsClientV1 {
     // Abort job
     abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Compleate job
-    compleateJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
+    completeJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
     // Get job by Id
     getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void;
     // Delete job by Id
@@ -373,7 +373,7 @@ Abort running job:
 Compleate running job:
 ```typescript
 
-    client.compleateJob("123", JOB1, (err, job) => {
+    client.completeJob("123", JOB1, (err, job) => {
         if (err != null) {
             console.error('Can\'t compleate job!');
             console.error(err);
