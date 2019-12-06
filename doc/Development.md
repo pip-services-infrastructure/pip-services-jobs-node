@@ -38,7 +38,7 @@ you may need to install database servers:
 
 After your environment is ready you can check out microservice source code from the Github repository:
 ```bash
-git clone git@github.com:pip-services-users/pip-services-email-node.git
+git clone git@github.com:pip-services-users/pip-services-jobs-node.git
 ```
 
 Then go to the project folder and install dependent modules:
