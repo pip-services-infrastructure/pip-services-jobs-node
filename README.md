@@ -177,7 +177,7 @@ client.configure(httpConfig);
 Instantiate the client and open connection to the microservice
 ```typescript
 // Create the client instance
-client = new JobssHttpClientV1();
+client = new JobsHttpClientV1();
 
 // Connect to the microservice
 client.open(null, function(err) {
