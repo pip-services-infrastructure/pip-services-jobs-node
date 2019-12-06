@@ -24,7 +24,7 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
         this.addCommand(this.makeCompleteJob());
         this.addCommand(this.makeDeleteJob());
         this.addCommand(this.makeDeleteJobs());
-        this.addCommand(this.makeCleanJobs());
+        //this.addCommand(this.makeCleanJobs());
         this.addCommand(this.makeStartJobByType());
     }
     makeAddJob() {
@@ -109,13 +109,6 @@ class JobsCommandSet extends pip_services3_commons_node_1.CommandSet {
     makeDeleteJobs() {
         return new pip_services3_commons_node_4.Command('delete_jobs', new pip_services3_commons_node_5.ObjectSchema(true), (correlationId, args, callback) => {
             this._controller.deleteJobs(correlationId, (err) => {
-                callback(err, null);
-            });
-        });
-    }
-    makeCleanJobs() {
-        return new pip_services3_commons_node_4.Command('clean_jobs', new pip_services3_commons_node_5.ObjectSchema(true), (correlationId, args, callback) => {
-            this._controller.cleanJobs(correlationId, (err) => {
                 callback(err, null);
             });
         });

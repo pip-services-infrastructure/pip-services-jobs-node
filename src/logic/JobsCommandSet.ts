@@ -33,7 +33,7 @@ export class JobsCommandSet extends CommandSet {
         this.addCommand(this.makeCompleteJob());
         this.addCommand(this.makeDeleteJob());
         this.addCommand(this.makeDeleteJobs());
-        this.addCommand(this.makeCleanJobs());
+        //this.addCommand(this.makeCleanJobs());
         this.addCommand(this.makeStartJobByType());
     }
 
@@ -178,15 +178,15 @@ export class JobsCommandSet extends CommandSet {
         );
     }
 
-    private makeCleanJobs(): ICommand {
-        return new Command(
-            'clean_jobs',
-            new ObjectSchema(true),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                this._controller.cleanJobs(correlationId, (err) => {
-                    callback(err, null);
-                });
-            }
-        );
-    }
+    // private makeCleanJobs(): ICommand {
+    //     return new Command(
+    //         'clean_jobs',
+    //         new ObjectSchema(true),
+    //         (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+    //             this._controller.cleanJobs(correlationId, (err) => {
+    //                 callback(err, null);
+    //             });
+    //         }
+    //     );
+    // }
 }

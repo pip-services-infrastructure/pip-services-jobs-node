@@ -2,6 +2,8 @@
 
 This is the jobs microservice. It keeps list of working jobs.
 
+</br> <img src="doc/Jobs-microservice.png"> </br>
+
 The microservice currently supports the following deployment options:
 * Deployment platforms: Standalone Process
 * External APIs: HTTP/REST
@@ -16,7 +18,8 @@ This microservice has no dependencies on other microservices.
 * [Configuration Guide](doc/Configuration.md)
 * Client SDKs
   - [Node.js SDK](https://github.com/pip-services-infrastructure/pip-clients-jobs-node)
-
+* Communication Protocols
+  - [HTTP Version 1](doc/HttpProtocolV1.md)
 
 ##  Contract
 
@@ -25,51 +28,40 @@ please, refer to documentation of the specific protocol.
 
 ```typescript
 
-export class NewJobV1 {
+class NewJobV1 {
     type: string;
     ref_id: string;
+    ttl: number;
     params: any;
-    ttl: number; // time to live job in ms
 }
 
-export class JobV1 {
-    // Job description
+class JobV1 {
     id: string;
     type: string;
     ref_id: string;
     params: any;
-    // Job control
     created: Date;
     started: Date;
     locked_until?: Date;
     execute_until?: Date;
     completed: Date;
-    retries: number; 
+    retries: number;
 }
 
-export interface IJobsClientV1 {
-    // Add new job
+interface IJobsController {
+
     addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
-    // Add new job if not exist with same type and ref_id
     addUniqJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void;
-    // Get list of all jobs
     getJobs(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;
-    // Start job
-    startJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
-    // Start fist free job by type
+    getJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    startJobById(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     startJobByType(correlationId: string, jobType: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
-    // Extend job execution limit on timeout value
-    extendJob(correlationId: string, job: JobV1, timeout:number, callback: (err: any, job: JobV1) => void): void;
-    // Abort job
-    abortJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
-    // Compleate job
-    completeJob(correlationId: string, job: JobV1, callback: (err: any, job: JobV1) => void): void;
-    // Get job by Id
-    getJobById(correlationId: string, jobId: string, callback: (err: any, page: JobV1) => void): void;
-    // Delete job by Id
-    deleteJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
-    // Remove all jobs
+    extendJob(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
+    abortJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
+    deleteJobById(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void;
     deleteJobs(correlationId: string, callback?: (err: any) => void): void;
+    cleanJobs(correlationId: string, callback?: (err: any) => void): void;
 }
 ```
 
@@ -236,21 +228,6 @@ const JOB2: NewJobV1 = {
     });
 ```
 
-Get existing job by job_id:
-```typescript    
-
-    client.deleteJobById("123", JOB1.id, (err, job) => {
-        if (err != null) {
-            console.error('Can\'t get job!');
-            console.error(err);
-        } else {
-            console.dir('Job was recived successfull');
-            console.dir('Job:');
-            console.dir(job.toString());
-        }
-    });
-```
-
 Get jobs by filter:
 ```typescript    
 
@@ -261,13 +238,13 @@ Get jobs by filter:
         } else {
             console.dir('Jobs was recived successfull');
             for (let job in page.data) {
-                console.dir('Job:');
+                console.dir('Jobs:');
                 console.dir(job.toString());
             }
         }
     });
 
-client.getJobs("123", FilterParams.fromTuples(
+    client.getJobs("123", FilterParams.fromTuples(
                         'lock', 'false'
                     ), 
                     new PagingParams(), (err, page) => {
@@ -277,7 +254,7 @@ client.getJobs("123", FilterParams.fromTuples(
         } else {
             console.dir('Jobs was recived successfull');
             for (let job in page.data) {
-                console.dir('Job:');
+                console.dir('Jobs:');
                 console.dir(job.toString());
             }
         }
@@ -300,7 +277,7 @@ Delete existing job by job_id:
     });
 ```
 
-Delete all job:
+Delete all jobs:
 ```typescript    
 
     client.deleteJobs("123", (err) => {
@@ -334,7 +311,7 @@ Start first free job by type:
 Start job (use this method, if you aborting job and want restart this):
 ```typescript
     let timeout = 1000*60*2; // Timeout for working job in ms
-    client.startJob("123", JOB1, timeout,  (err, job) => {
+    client.startJobById("123", JOB1.id, timeout,  (err, job) => {
         if (err != null) {
             bconsole.error('Can\'t start jo!');
             console.error(err);
@@ -347,7 +324,7 @@ Start job (use this method, if you aborting job and want restart this):
 Extend work time existing job:
 ```typescript
     let timeout = 1000*60*2; // Timeout for extend working time for job in ms
-    client.extendJob("123", JOB1, timeout,  (err, job) => {
+    client.extendJob("123", JOB1.id, timeout,  (err, job) => {
         if (err != null) {
             console.error('Can\'t extend job!');
             console.error(err);
@@ -360,7 +337,7 @@ Extend work time existing job:
 Abort running job:
 ```typescript
 
-    client.abortJob("123", JOB1, (err, job) => {
+    client.abortJob("123", JOB1.id, (err, job) => {
         if (err != null) {
             console.error('Can\'t abort job!');
             console.error(err);
@@ -373,7 +350,7 @@ Abort running job:
 Compleate running job:
 ```typescript
 
-    client.completeJob("123", JOB1, (err, job) => {
+    client.completeJob("123", JOB1.id, (err, job) => {
         if (err != null) {
             console.error('Can\'t compleate job!');
             console.error(err);

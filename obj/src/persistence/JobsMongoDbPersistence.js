@@ -73,22 +73,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
             criteria.push({ retries: { $gt: min_retries } });
         return criteria.length > 0 ? { $and: criteria } : null;
     }
-    composeFilterStartJob(filter) {
-        filter = filter || new pip_services3_commons_node_1.FilterParams();
-        let andCriteria = [];
-        let type = filter.getAsNullableString('type');
-        if (type != null)
-            andCriteria.push({ type: type });
-        let max_retries = filter.getAsNullableInteger('max_retries');
-        if (max_retries != null)
-            andCriteria.push({ retries: { $lt: max_retries } });
-        let now = filter.getAsNullableDateTime('now');
-        if (now != null) {
-            andCriteria.push({ $or: [{ locked_until: null }, { locked_until: { $lt: now } }] });
-            andCriteria.push({ $or: [{ execute_until: null }, { execute_until: { $gte: now } }] });
-        }
-        return andCriteria.length > 0 ? { $and: andCriteria } : null;
-    }
     startJobById(correlationId, id, timeout, callback) {
         let now = new Date();
         let criteria = {

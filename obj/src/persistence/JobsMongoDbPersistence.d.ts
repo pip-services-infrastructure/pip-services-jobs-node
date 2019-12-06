@@ -7,7 +7,6 @@ import { IJobsPersistence } from './IJobsPersistence';
 export declare class JobsMongoDbPersistence extends IdentifiableMongoDbPersistence<JobV1, string> implements IJobsPersistence {
     constructor();
     private composeFilter;
-    private composeFilterStartJob;
     startJobById(correlationId: string, id: string, timeout: number, callback: (err: any, job: JobV1) => void): void;
     startJobByType(correlationId: string, type: string, timeout: number, maxRetries: number, callback: (err: any, job: JobV1) => void): void;
     getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<JobV1>) => void): void;

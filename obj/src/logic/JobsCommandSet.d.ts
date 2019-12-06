@@ -14,5 +14,4 @@ export declare class JobsCommandSet extends CommandSet {
     private makeCompleteJob;
     private makeDeleteJob;
     private makeDeleteJobs;
-    private makeCleanJobs;
 }
