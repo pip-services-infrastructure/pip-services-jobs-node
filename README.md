@@ -6,6 +6,26 @@ The service allows you to manage tasks in those cases when the generation (state
 One of the application options, see the following diagram:
 </br> <img src="doc/Jobs-microservice.png"> </br>
 
+To create a task, a simplified data model is used which should contain the following information:
+- type - task type
+- ref_id - identifier of the object on which the task will work
+- ttl - the maximum lifetime of the task before its execution
+- params - additional parameters necessary to complete the task
+
+The created task is stored in the following form:
+- id unique identifier
+- type - task type
+- ref_id - identifier of the object on which the task will work
+- params - additional parameters necessary to complete the task
+- created - time stamp for creating a task
+- started - time stamp of the task start
+- locked_until - task lock time stamp
+- execute_until - time stamp of task execution restriction
+- completed - time stamp for completing a task
+- retries - number of starts
+
+Task management is carried out through the API described below.
+
 The microservice currently supports the following deployment options:
 * Deployment platforms: Standalone Process
 * External APIs: HTTP/REST
