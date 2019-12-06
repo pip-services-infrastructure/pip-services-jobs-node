@@ -1,4 +1,4 @@
-# Configuration Guide <br/> Clusters service Microservice
+# Configuration Guide <br/> Jobs service Microservice
 
 Cluster microservice configuration structure follows the 
 [standard configuration](https://github.com/pip-services/pip-services3-container-node/doc/Configuration.md) 

@@ -1,7 +1,7 @@
 
-# Deployment Guide <br/> Cluster service Microservice
+# Deployment Guide <br/> Jobs service Microservice
 
-Cluster service microservice can be used in different deployment scenarios.
+Jobs service microservice can be used in different deployment scenarios.
 
 * [Standalone Process](#process)
 

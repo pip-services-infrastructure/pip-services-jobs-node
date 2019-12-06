@@ -2,6 +2,8 @@
 
 This is the jobs microservice. It keeps list of working jobs.
 
+The service allows you to manage tasks in those cases when the generation (statement) of the task is performed in a separate microservice, and direct execution is implemented in one way or another.
+One of the application options, see the following diagram:
 </br> <img src="doc/Jobs-microservice.png"> </br>
 
 The microservice currently supports the following deployment options:
