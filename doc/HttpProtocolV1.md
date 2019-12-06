@@ -35,7 +35,7 @@ Add new job if not exist with same type and ref_id
 - new_job: NewJobV1 - params for creates new job
 
 **Response body:**
-job: JobV1 - retrived existing or generated new job
+- job: JobV1 - retrived existing or generated new job
 
 ### <a name="operation3"></a> Method: 'POST', route '/v1/jobs/get_jobs'
 
@@ -78,7 +78,7 @@ Get job by id
 - job_id: string - 
 
 **Response body:**
-job: JobV1 - finded job 
+- job: JobV1 - finded job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/start_job_by_id'
 
@@ -87,9 +87,9 @@ Start job by id
 **Request body:**
  - job_id: string - job id for start
  - timeout: number - timeout for execution in ms
- 
+
 **Response body:**
-job: JobV1 - started job 
+- job: JobV1 - started job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/start_job_by_type'
 
@@ -100,7 +100,7 @@ job: JobV1 - started job
  - timeout: number - timeout for execution in ms
 
 **Response body:**
-job: JobV1 - started job 
+- job: JobV1 - started job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/extend_job'
 
@@ -111,7 +111,7 @@ Extend job execution limit on timeout value
  - timeout: number - timeout for execution in ms
 
 **Response body:**
-job: JobV1 - extended job 
+- job: JobV1 - extended job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/abort_job'
 
@@ -121,7 +121,7 @@ Abort job
 - job_id: string - job id for abort
 
 **Response body:**
-job: JobV1 - aborted job 
+- job: JobV1 - aborted job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/complete_job'
 
@@ -131,7 +131,7 @@ Complete job
 - job_id: string - job id for complete
 
 **Response body:**
-job: JobV1 - completed job 
+ - job: JobV1 - completed job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/delete_job_by_id'
 
@@ -141,7 +141,7 @@ Delete job by id
 - job_id: string - job id for delete
 
 **Response body:**
-job: JobV1 - deleted job 
+- job: JobV1 - deleted job 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/jobs/delete_jobs'
 
