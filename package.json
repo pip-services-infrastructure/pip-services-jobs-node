@@ -1,6 +1,6 @@
 {
     "name": "pip-services-jobs-node",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "Conceptual Vision Consulting LLC",
     "description": "Jobs orchestration microservice in Node.js",
     "contributors": [

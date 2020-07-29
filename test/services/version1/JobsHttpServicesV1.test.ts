@@ -479,7 +479,7 @@ suite('JobsHttpServiceV1', () => {
                         assert.isNull(err);
                         assert.isObject(job);
 
-                        assert.isNotNull(job.locked_until);
+                        assert.isNull(job.locked_until);
                         assert.isNull(job.started);
 
                         callback(err);

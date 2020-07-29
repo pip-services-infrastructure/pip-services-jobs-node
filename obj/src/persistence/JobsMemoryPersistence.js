@@ -87,7 +87,6 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
             item.started = now;
             item.locked_until = new Date(now.getTime() + timeout);
             item.retries++;
-            item.timeout = timeout;
             this._logger.trace(correlationId, "Updated item %s", item.id);
             this.save(correlationId, (err) => {
                 if (callback)
@@ -104,7 +103,7 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
         let now = new Date();
         let item = _.find(this._items, (item) => {
             return item.type == type && item.completed == null && item.retries < maxRetries
-                && (item.locked_until == null || item.locked_until.getTime() <= now);
+                && (item.locked_until == null || item.locked_until.getTime() <= now.getTime());
         });
         if (item == null) {
             this._logger.trace(correlationId, "Item with type %s was not found", type);
@@ -115,7 +114,6 @@ class JobsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemory
         item.started = now;
         item.locked_until = new Date(now.getTime() + timeout);
         item.retries++;
-        item.timeout = timeout;
         this._logger.trace(correlationId, "Updated item %s", item.id);
         this.save(correlationId, (err) => {
             if (callback)

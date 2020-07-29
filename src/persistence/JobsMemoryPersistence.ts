@@ -1,6 +1,6 @@
 let _ = require('lodash');
 
-import { FilterParams, DateTimeConverter } from 'pip-services3-commons-node';
+import { FilterParams } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
 import { DataPage } from 'pip-services3-commons-node';
 
@@ -109,7 +109,6 @@ export class JobsMemoryPersistence
             item.started = now;
             item.locked_until = new Date(now.getTime() + timeout);
             item.retries++;
-            item.timeout = timeout;
 
             this._logger.trace(correlationId, "Updated item %s", item.id);
 
@@ -126,9 +125,9 @@ export class JobsMemoryPersistence
         callback: (err: any, job: JobV1) => void): void {
 
         let now = new Date();
-        let item = _.find(this._items, (item) => {
+        let item = _.find(this._items, (item:JobV1) => {
             return item.type == type && item.completed == null && item.retries < maxRetries
-                && (item.locked_until == null || item.locked_until.getTime() <= now);
+                && (item.locked_until == null || item.locked_until.getTime() <= now.getTime());
         });
 
         if (item == null) {
@@ -140,7 +139,6 @@ export class JobsMemoryPersistence
         item.started = now;
         item.locked_until = new Date(now.getTime() + timeout);
         item.retries++;
-        item.timeout = timeout;
 
         this._logger.trace(correlationId, "Updated item %s", item.id);
 

@@ -117,7 +117,6 @@ export class JobsMongoDbPersistence
 
         let update = {
             $set: {
-                timeout: timeout,
                 started: now,
                 locked_until: new Date(now.getTime() + timeout),
             },
@@ -165,7 +164,7 @@ export class JobsMongoDbPersistence
 
         let update = {
             $set: {
-                timeout: timeout,
+                
                 started: now,
                 locked_until: new Date(now.getTime() + timeout),
             },

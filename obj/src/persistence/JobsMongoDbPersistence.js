@@ -91,7 +91,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         };
         let update = {
             $set: {
-                timeout: timeout,
                 started: now,
                 locked_until: new Date(now.getTime() + timeout),
             },
@@ -131,7 +130,6 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         };
         let update = {
             $set: {
-                timeout: timeout,
                 started: now,
                 locked_until: new Date(now.getTime() + timeout),
             },

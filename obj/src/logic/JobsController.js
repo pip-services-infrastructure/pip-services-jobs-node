@@ -96,17 +96,17 @@ class JobsController {
     // Extend job execution limit on timeout value
     extendJob(correlationId, jobId, timeout, callback) {
         let now = new Date();
-        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('timeout', timeout, 'locked_util', new Date(now.getTime() + timeout));
+        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('locked_until', new Date(now.getTime() + timeout));
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
     // Abort job
     abortJob(correlationId, jobId, callback) {
-        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('started', null, 'locked_util', null);
+        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('started', null, 'locked_until', null);
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
     // Complete job
     completeJob(correlationId, jobId, callback) {
-        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('started', null, 'locked_util', null, 'completed', new Date());
+        let update = pip_services3_commons_node_1.AnyValueMap.fromTuples('started', null, 'locked_until', null, 'completed', new Date());
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
     // Delete job by Id

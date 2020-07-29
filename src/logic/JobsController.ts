@@ -130,8 +130,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     public extendJob(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
         let now = new Date();
         let update = AnyValueMap.fromTuples(
-            'timeout', timeout,
-            'locked_util', new Date(now.getTime() + timeout)
+            'locked_until', new Date(now.getTime() + timeout)
         );
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
@@ -140,7 +139,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     public abortJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
         let update = AnyValueMap.fromTuples(
             'started', null,
-            'locked_util', null,
+            'locked_until', null,
         );
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
@@ -149,7 +148,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     public completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
         let update = AnyValueMap.fromTuples(
             'started', null,
-            'locked_util', null,
+            'locked_until', null,
             'completed', new Date()
         );
         this._persistence.updatePartially(correlationId, jobId, update, callback);
