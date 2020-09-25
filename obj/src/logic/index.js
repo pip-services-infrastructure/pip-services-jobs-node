@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var JobsCommandSet_1 = require("./JobsCommandSet");
-exports.JobsCommandSet = JobsCommandSet_1.JobsCommandSet;
+Object.defineProperty(exports, "JobsCommandSet", { enumerable: true, get: function () { return JobsCommandSet_1.JobsCommandSet; } });
 var JobsController_1 = require("./JobsController");
-exports.JobsController = JobsController_1.JobsController;
+Object.defineProperty(exports, "JobsController", { enumerable: true, get: function () { return JobsController_1.JobsController; } });
 //# sourceMappingURL=index.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JobsFilePersistence = void 0;
 const pip_services3_data_node_1 = require("pip-services3-data-node");
 const JobsMemoryPersistence_1 = require("./JobsMemoryPersistence");
 class JobsFilePersistence extends JobsMemoryPersistence_1.JobsMemoryPersistence {

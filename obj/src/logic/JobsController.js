@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JobsController = void 0;
 let _ = require('lodash');
 let async = require('async');
 const pip_services3_commons_node_1 = require("pip-services3-commons-node");
@@ -136,7 +137,9 @@ class JobsController {
                 this._logger.error(correlationId, err, "Failed to clean up jobs.");
             }
             this._logger.trace(correlationId, "Jobs cleaning ended.");
-            callback(err);
+            if (callback) {
+                callback(err);
+            }
         });
     }
 }

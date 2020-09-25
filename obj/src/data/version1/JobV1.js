@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JobV1 = void 0;
 class JobV1 {
     constructor(newJob) {
         let now = new Date();

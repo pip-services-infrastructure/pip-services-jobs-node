@@ -81,7 +81,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
         }
         return this._commandSet;
     }
-    
+
     // Add new job
     public addJob(correlationId: string, newJob: NewJobV1, callback: (err: any, job: JobV1) => void): void {
         let job = new JobV1(newJob);
@@ -104,7 +104,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
             }
         });
     }
-    
+
     // Get list of all jobs
     public getJobs(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<JobV1>) => void): void {
@@ -117,7 +117,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
     }
 
     // Start job
-    public startJobById(correlationId: string, jobId: string, timeout:number, callback: (err: any, job: JobV1) => void): void {
+    public startJobById(correlationId: string, jobId: string, timeout: number, callback: (err: any, job: JobV1) => void): void {
         this._persistence.startJobById(correlationId, jobId, timeout, callback);
     }
 
@@ -143,7 +143,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
         );
         this._persistence.updatePartially(correlationId, jobId, update, callback);
     }
-    
+
     // Complete job
     public completeJob(correlationId: string, jobId: string, callback: (err: any, job: JobV1) => void): void {
         let update = AnyValueMap.fromTuples(
@@ -178,7 +178,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
                         'min_retries', this._maxRetries
                     ),
                     callback
-                );        
+                );
             },
             (callback) => {
                 this._persistence.deleteByFilter(
@@ -187,7 +187,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
                         'execute_to', now
                     ),
                     callback
-                );        
+                );
             },
             (callback) => {
                 this._persistence.deleteByFilter(
@@ -196,7 +196,7 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
                         'completed_to', now
                     ),
                     callback
-                );        
+                );
             },
         ], (err) => {
             if (err != null) {
@@ -204,8 +204,9 @@ export class JobsController implements IJobsController, IConfigurable, IReferenc
             }
 
             this._logger.trace(correlationId, "Jobs cleaning ended.");
-
-            callback(err);
+            if (callback) {
+                callback(err);
+            }
         });
     }
 }
