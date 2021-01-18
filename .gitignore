@@ -4,3 +4,4 @@
 /obj/test
 /.vscode
 /docker/id_rsa*
+package-lock.json

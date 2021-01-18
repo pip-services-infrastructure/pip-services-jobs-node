@@ -64,7 +64,7 @@ class JobsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMo
         if (completed_from != null)
             criteria.push({ completed: { $gte: completed_from } });
         let completed_to = filter.getAsNullableDateTime('completed_to');
-        if (completed != null)
+        if (completed_to != null)
             criteria.push({ completed: { $lte: completed_to } });
         let retries = filter.getAsNullableInteger('retries');
         if (retries != null)
